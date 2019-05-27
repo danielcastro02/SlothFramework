@@ -16,7 +16,7 @@ class geradorPDO {
         file_put_contents("./conexao.php", $conteudo);
         
         $con = new PDO("mysql:host=" . $_POST['host'] . ";",  $_POST['usuario'] ,  $_POST['senha']);
-        $sql = $con->prepare("create database if not exists".$_POST['nome']);
+        $sql = $con->prepare("create database if not exists ".$_POST['nome']);
         $sql->execute();
         
         header('location: ../index.php?msg=sucesso');
