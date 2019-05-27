@@ -38,7 +38,7 @@ and open the template in the editor.
             <?php
         } else {
             ?>
-            <form action="./Controle/geradorControle.php?function=criaTabela">
+        <form action="./Controle/geradorControle.php?function=gerarTabela" method="POST">
                 <div id="aumentar" class="row">
                     <div class="input-field col s6 offset-s3">
                         <input type="text" placeholder="Nome da Tabela" name="nome"/><br>
