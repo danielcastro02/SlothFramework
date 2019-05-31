@@ -122,7 +122,7 @@ if (realpath('./index.php')) {
 }
 
 
-class " . $nome . "{
+class " . $nome . "PDO{
     function inserir" . $nome . "() {
         \$" . $nomeNormal . " = new " . $nomeNormal . "(\$_POST);
         \$con = new conexao();
@@ -193,7 +193,7 @@ class " . $nome . "{
 
             $conteudo = "
                     
-    public function select" . $nome .ucfirst($atributos[$i]). "(\$" . $atributos[$i] . "){
+    public function select" . $nome . ucfirst($atributos[$i]) . "(\$" . $atributos[$i] . "){
             
         \$con = new conexao();
         \$pdo = \$con->getConexao();
@@ -211,12 +211,30 @@ class " . $nome . "{
             file_put_contents("./" . $nomeNormal . "PDO.php", $conteudo, FILE_APPEND);
         }
 
-        $conteudo = "
-    
-    public function delete".$nome."(\$definir){
+
+        $conteudo = " 
+    public function update" . $nome . "(" . $nome . " $" . $nome . "){        
         \$con = new conexao();
         \$pdo = \$con->getConexao();
-        \$stmt = \$pdo->prepare('select * from " . $nomeNormal . " where definir = :definir ;');
+        \$stmt = \$pdo->prepare('update" . $nomeNormal . "set ";
+        for ($i = 1; $i < (count($atributos) - 1); $i++) {
+            $conteudo = $conteudo . $atributos[$i] . " = :" . $atributos[$i] . " , ";
+        }
+        $conteudo = $conteudo . $atributos[$i] . " = :" . $atributos[$i];
+
+        $conteudo = $conteudo . " where " . $atributos[0] . " = :" . $atributos[0] . ";');
+             
+        \$stmt->execute();
+        return \$stmt->rowCount();
+    }            ";
+
+        file_put_contents("./" . $nomeNormal . "PDO.php", $conteudo, FILE_APPEND);
+        $conteudo = "
+    
+    public function delete" . $nome . "(\$definir){
+        \$con = new conexao();
+        \$pdo = \$con->getConexao();
+        \$stmt = \$pdo->prepare('delete from " . $nomeNormal . " where definir = :definir ;');
         \$stmt->bindValue(':definir', \$definir);
         \$stmt->execute();
         return \$stmt->rowCount();
@@ -224,9 +242,45 @@ class " . $nome . "{
 }
 ";
         if (file_put_contents("./" . $nomeNormal . "PDO.php", $conteudo, FILE_APPEND)) {
-            header('location: ../index.php?msg=ok');
+            $this->criaControle($semente);
         } else {
-            header('location: ../index.php?msg=erro');
+            header('location: ../index.php?msg=erroCriaPDO');
+        }
+    }
+
+    public function criaControle(gerador $semente) {
+        $conteudo = "<?php
+
+if (!isset(\$_SESSION)) {
+    session_start();
+}
+
+if (realpath('./index.php')) {
+    include_once './Controle/" . $semente->getNome() . "PDO.php';
+} else {
+    if (realpath('../index.php')) {
+        include_once '../Controle/" . $semente->getNome() . "PDO.php';
+    } else {
+        if (realpath('../../index.php')) {
+            include_once '../../Controle/" . $semente->getNome() . "PDO.php';
+        }
+    }
+}
+
+\$classe = new " . $semente->getNome() . "PDO();
+
+if (isset(\$_GET['function'])) {
+    \$metodo = \$_GET['function'];
+    \$classe->\$metodo();
+}
+
+";
+
+        if (file_put_contents("./" . $semente->getNome() . "Controle.php", $conteudo, FILE_APPEND)) {
+            header('location: ../index.php?msg=ok');
+
+        } else {
+            header('location: ../index.php?msg=erroCriaControle');
         }
     }
 
