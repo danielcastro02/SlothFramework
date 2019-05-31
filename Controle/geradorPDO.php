@@ -11,16 +11,16 @@ try {
 class geradorPDO {
 
     public function criaConexao() {
-        $conteudo = "<?php \n
-                class conexao { \n
-                \n
-                public function getConexao(){\n
-                \n
-                    \$con = new PDO('mysql:host=" . $_POST['host'] . ";dbname=" . $_POST['nome'] . "','" . $_POST['usuario'] . "','" . $_POST['senha'] . "');\n
-                     return \$con;\n
-                \n
-                    }\n
-                }";
+        $conteudo = "<?php
+    class conexao {
+               
+        public function getConexao(){
+         
+           \$con = new PDO('mysql:host=" . $_POST['host'] . ";dbname=" . $_POST['nome'] . "','" . $_POST['usuario'] . "','" . $_POST['senha'] . "');
+            return \$con;
+          
+        }
+    }";
         file_put_contents("./conexao.php", $conteudo);
 
         $con = new PDO("mysql:host=" . $_POST['host'] . ";", $_POST['usuario'], $_POST['senha']);
@@ -38,12 +38,12 @@ class geradorPDO {
         $att = $semente->getAtributo();
         $tipos = $semente->getTipo();
         $regras = $semente->getRegra();
-        $preSql = "create table if not exists ".$semente->getNome()." (\n";
-        $q = (count($att)-1);
+        $preSql = "create table if not exists " . $semente->getNome() . " (\n";
+        $q = (count($att) - 1);
         for ($i = 0; $i < $q; $i++) {
-            $preSql = $preSql .  $att[$i] . " " . $tipos[$i] . " " . $regras[$i] . " ,\n";
+            $preSql = $preSql . $att[$i] . " " . $tipos[$i] . " " . $regras[$i] . " ,\n";
         }
-        $preSql = $preSql .  $att[$q] . " " . $tipos[$q] . " " . $regras[$q] . "\n);";
+        $preSql = $preSql . $att[$q] . " " . $tipos[$q] . " " . $regras[$q] . "\n);";
 
         $sql = $pdo->prepare($preSql);
 
@@ -86,18 +86,18 @@ class geradorPDO {
                         . "     function set" . ucfirst($att[$i]) . "($" . $att[$i] . "){\n"
                         . "          \$this->" . $att[$i] . " = $" . $att[$i] . ";\n"
                         . "     }\n\n"
-                        ;
+                ;
             }
-            $conteudo = $conteudo. "}";
-            
-            file_put_contents("../Modelo/". ucfirst($semente->getNome()).".php", $conteudo);
+            $conteudo = $conteudo . "}";
+
+            file_put_contents("../Modelo/" . ucfirst($semente->getNome()) . ".php", $conteudo);
             $this->gerarPDO($semente);
-        }else{
+        } else {
             header('location: ../index.php?msg=ERRO');
         }
     }
-    
-    public function gerarPDO(gerador $semente){
+
+    public function gerarPDO(gerador $semente) {
         $nome = ucfirst($semente->getNome());
         $nomeNormal = $semente->getNome();
         $atributos = $semente->getAtributo();
@@ -108,55 +108,126 @@ class geradorPDO {
 
 if (realpath('./index.php')) {
     include_once './Controle/conexao.php';
-    include_once './Modelo/".$nome.".php';
+    include_once './Modelo/" . $nome . ".php';
 } else {
     if (realpath('../index.php')) {
         include_once '../Controle/conexao.php';
-        include_once '../Modelo/".$nome.".php';
+        include_once '../Modelo/" . $nome . ".php';
     } else {
         if (realpath('../../index.php')) {
             include_once '../../Controle/conexao.php';
-            include_once '../../Modelo/".$nome.".php';
+            include_once '../../Modelo/" . $nome . ".php';
         }
     }
 }
 
 
-class ".$nome."{
-    function inserir".$nome."() {
-        \$".$nomeNormal." = new ".$nomeNormal."(\$_POST);
+class " . $nome . "{
+    function inserir" . $nome . "() {
+        \$" . $nomeNormal . " = new " . $nomeNormal . "(\$_POST);
         \$con = new conexao();
         \$pdo = \$con->getConexao();
-        \$stmt = \$pdo->prepare('insert into ".$nome." values(";
-        
+        \$stmt = \$pdo->prepare('insert into " . $nome . " values(";
+
         $buscaRegra = explode(" ", $semente->getRegra()[0]);
-        if(in_array("auto_increment", $buscaRegra)||in_array("AUTO_INCREMENT", $buscaRegra)){
-            $conteudo = $conteudo."default , ";
-        }else{
-            $conteudo = $conteudo.":".$semente->getAtributo()[0]." , ";
-        }
-        
-        for($i = 1; $i<count($atributos); $i++){
-            $conteudo = $conteudo.":".$atributos[$i]." , ";
-        }
-        $conteudo = $conteudo.");\n";
-        for($i = 0; $i<count($atributos); $i++){
-        $conteudo = $conteudo."
-        \$stmt->bindValue(':".$atributo[$i]."', \$".$nome."->get".ucfirst($atributo[$i])."());    
-                ";
-        }
-                
-        $stmt->bindValue(':nome', $contato->getNome());
-        $stmt->bindValue(':cpf', $contato->getCpfCnpj());
-        $stmt->bindValue(':email', $contato->getEmail());
-        $stmt->bindValue(':descricao', $contato->getDescricao());
-        if ($stmt->execute()) {
-            header('location: ../Tela/Sistema/reclamacao.php?msg=sucessoReclamacao');
+        $verificaDefault = false;
+        if (in_array("auto_increment", $buscaRegra) || in_array("AUTO_INCREMENT", $buscaRegra)) {
+            $conteudo = $conteudo . "default , ";
+            $verificaDefault = true;
         } else {
-            header('location: ../Tela/Sistema/reclamacao.php?msg=erroReclamacao');
+            $conteudo = $conteudo . ":" . $semente->getAtributo()[0] . " , ";
+        }
+
+        for ($i = 1; $i < (count($atributos) - 1); $i++) {
+            $conteudo = $conteudo . ":" . $atributos[$i] . " , ";
+        }
+        $conteudo = $conteudo . ":" . $atributos[$i] . ");' ";
+        $conteudo = $conteudo . ");\n";
+        if ($verificaDefault) {
+            for ($i = 1; $i < count($atributos); $i++) {
+                $conteudo = $conteudo . "
+        \$stmt->bindValue(':" . $atributos[$i] . "', \$" . $nomeNormal . "->get" . ucfirst($atributos[$i]) . "());    
+        ";
+            }
+        } else {
+            for ($i = 0; $i < count($atributos); $i++) {
+                $conteudo = $conteudo . "
+        \$stmt->bindValue(':" . $atributos[$i] . "', \$" . $nomeNormal . "->get" . ucfirst($atributos[$i]) . "());    
+        ";
+            }
+        }
+
+        $conteudo = $conteudo . "
+        if(\$stmt->execute()){ 
+            header('location: ../index.php?msg=" . $nomeNormal . "Inserido');
+        }else{
+            header('location: ../index.php?msg=" . $nomeNormal . "ErroInsert');
         }
     }
+    
 ";
+        file_put_contents("./" . $nomeNormal . "PDO.php", $conteudo);
+
+        $conteudo = "
+            
+";
+
+        $conteudo = $conteudo . "
+    public function select" . $nome . "(){
+            
+        \$con = new conexao();
+        \$pdo = \$con->getConexao();
+        \$stmt = \$pdo->prepare('select * from " . $nomeNormal . " ;');
+        \$stmt->execute();
+        if (\$stmt->rowCount() > 0) {
+            return \$stmt;
+        } else {
+            return false;
+        }
+    }
+    
+";
+        file_put_contents("./" . $nomeNormal . "PDO.php", $conteudo, FILE_APPEND);
+
+        for ($i = 0; $i < count($atributos); $i++) {
+
+            $conteudo = "
+                    
+    public function select" . $nome .ucfirst($atributos[$i]). "(\$" . $atributos[$i] . "){
+            
+        \$con = new conexao();
+        \$pdo = \$con->getConexao();
+        \$stmt = \$pdo->prepare('select * from " . $nomeNormal . " where " . $atributos[$i] . " = :" . $atributos[$i] . ";');
+        \$stmt->bindValue(':" . $atributos[$i] . "', \$" . $atributos[$i] . ");
+        \$stmt->execute();
+        if (\$stmt->rowCount() > 0) {
+            return \$stmt;
+        } else {
+            return false;
+        }
+    }
+    
+";
+            file_put_contents("./" . $nomeNormal . "PDO.php", $conteudo, FILE_APPEND);
+        }
+
+        $conteudo = "
+    
+    public function delete".$nome."(\$definir){
+        \$con = new conexao();
+        \$pdo = \$con->getConexao();
+        \$stmt = \$pdo->prepare('select * from " . $nomeNormal . " where definir = :definir ;');
+        \$stmt->bindValue(':definir', \$definir);
+        \$stmt->execute();
+        return \$stmt->rowCount();
+    }
+}
+";
+        if (file_put_contents("./" . $nomeNormal . "PDO.php", $conteudo, FILE_APPEND)) {
+            header('location: ../index.php?msg=ok');
+        } else {
+            header('location: ../index.php?msg=erro');
+        }
     }
 
 }
