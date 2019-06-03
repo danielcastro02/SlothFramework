@@ -1,14 +1,14 @@
 <?php
 
-class gerador{
-    
+class gerador {
+
     private $id_tabela;
     private $nome;
     private $atributo;
     private $regra;
     private $tipo;
-    
-     public function __construct() {
+
+    public function __construct() {
         if (func_num_args() != 0) {
             $atributos = func_get_args()[0];
             foreach ($atributos as $atributo => $valor) {
@@ -26,7 +26,7 @@ class gerador{
             }
         }
     }
-    
+
     function getId_tabela() {
         return $this->id_tabela;
     }
@@ -67,6 +67,4 @@ class gerador{
         $this->tipo = $tipo;
     }
 
-
-    
 }
