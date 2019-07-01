@@ -97,12 +97,54 @@ class geradorPDO {
         }
     }
 
+    public function geraModelo(gerador $semente) {
+        $att = $semente->getAtributo();
+        $conteudo = "<?php \n"
+                . "\n"
+                . "class " . $semente->getNome() . "{\n\n";
+
+        for ($i = 0; $i < count($att); $i++) {
+            $conteudo = $conteudo . "private \$" . $att[$i] . ";\n";
+        }
+        $conteudo = $conteudo . "\n\n"
+                . "public function __construct() {
+    if (func_num_args() != 0) {
+        \$atributos = func_get_args()[0];
+        foreach (\$atributos as \$atributo => \$valor) {
+                if (isset(\$valor)) {
+                    \$this->\$atributo = \$valor;
+                }
+            }
+        }
+    }
+
+    function atualizar(\$vetor) {
+        foreach (\$vetor as \$atributo => \$valor) {
+            if (isset(\$valor)) {
+                \$this->\$atributo = \$valor;
+            }
+        }
+    }"
+                . "\n\n";
+        for ($i = 0; $i < count($att); $i++) {
+            $conteudo = $conteudo . "     public function get" . ucfirst($att[$i]) . "(){\n"
+                    . "         return \$this->" . $att[$i] . ";\n"
+                    . "     }\n\n"
+                    . "     function set" . ucfirst($att[$i]) . "($" . $att[$i] . "){\n"
+                    . "          \$this->" . $att[$i] . " = $" . $att[$i] . ";\n"
+                    . "     }\n\n"
+            ;
+        }
+        $conteudo = $conteudo . "}";
+
+        file_put_contents("../Modelo/" . ucfirst($semente->getNome()) . ".php", $conteudo);
+        $this->gerarPDO($semente);
+    }
+
     public function gerarPDO(gerador $semente) {
         $nome = ucfirst($semente->getNome());
         $nomeNormal = $semente->getNome();
         $atributos = $semente->getAtributo();
-        $regras = $semente->getRegra();
-        $tipos = $semente->getTipo();
         $conteudo = "<?php
 
 if (realpath('./index.php')) {
@@ -222,17 +264,17 @@ class " . $nome . "PDO{
         $conteudo = $conteudo . $atributos[$i] . " = :" . $atributos[$i];
 
         $conteudo = $conteudo . " where " . $atributos[0] . " = :" . $atributos[0] . ";');";
-             
+
         for ($i = 1; $i < count($atributos); $i++) {
-                $conteudo = $conteudo . "
+            $conteudo = $conteudo . "
         \$stmt->bindValue(':" . $atributos[$i] . "', \$" . $nomeNormal . "->get" . ucfirst($atributos[$i]) . "());
         ";
         }
-        
+
         $conteudo = $conteudo . "
         \$stmt->bindValue(':" . $atributos[0] . "', \$" . $nomeNormal . "->get" . ucfirst($atributos[0]) . "());
         ";
-        
+
         $conteudo = $conteudo . "\$stmt->execute();
         return \$stmt->rowCount();
     }            ";
