@@ -40,7 +40,6 @@ and open the template in the editor.
                                 <label>Senha</label>
                             </div>
                         </div><div class="row center">
-                            <a href="#" id="adiciona" class="btn black">Adicionar atributo</a>
                             <input type="submit" class="btn black">
                         </div>
                     </form>
