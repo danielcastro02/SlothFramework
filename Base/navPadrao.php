@@ -43,7 +43,7 @@ if (realpath("./index.php")) {
                     <li><a href="#!">PHPMailer</a></li>
                     <li><a href="#!">Jquery</a></li>
                     <li><a href="#!">Materialize</a></li>
-                    <li><a href="#!">HTML2PDF</a></li>
+                    <li><a href="<?php echo $pontos; ?>./Controle/bibliotecaControle.php?function=html2pdf">HTML2PDF</a></li>
                     <li><a href="#!">Chart</a></li>
                     <li><a href="<?php echo $pontos; ?>./Controle/bibliotecaControle.php?function=composer">Composer</a></li>
                 </ul>

@@ -21,15 +21,20 @@ class bibliotecaPDO {
     }
 
     function html2pdf() {
+        echo "<h1>Instalando...</h1>";
+        set_time_limit(600);
         shell_exec("..\Scripts\html2pdf.bat");
-        $conteudo = "require '../vendor/autoload.php';
+        set_time_limit(30);
+        $conteudo = "<?php
+    require '../vendor/autoload.php';
 
     use Spipu\Html2Pdf\Html2Pdf;
 
     \$html2pdf = new Html2Pdf();
     \$html2pdf->writeHTML('<h1>HelloWorld</h1>This is my first test');
     \$html2pdf->output();";
-        file_put_contents("../Exemplos/exemplohtml2pdf.php", $conteudo);
+        mkdir("../Exemplo");
+        file_put_contents("../Exemplo/exemplohtml2pdf.php", $conteudo);
         header('location: ../index.php?msg=instalado');
     }
 
