@@ -103,8 +103,7 @@ class geradorPDO {
         $atributos = $semente->getAtributo();
         $regras = $semente->getRegra();
         $tipos = $semente->getTipo();
-        $conteudo = "
-<?php
+        $conteudo = "<?php
 
 if (realpath('./index.php')) {
     include_once './Controle/conexao.php';
@@ -222,9 +221,19 @@ class " . $nome . "PDO{
         }
         $conteudo = $conteudo . $atributos[$i] . " = :" . $atributos[$i];
 
-        $conteudo = $conteudo . " where " . $atributos[0] . " = :" . $atributos[0] . ";');
+        $conteudo = $conteudo . " where " . $atributos[0] . " = :" . $atributos[0] . ";');";
              
-        \$stmt->execute();
+        for ($i = 1; $i < count($atributos); $i++) {
+                $conteudo = $conteudo . "
+        \$stmt->bindValue(':" . $atributos[$i] . "', \$" . $nomeNormal . "->get" . ucfirst($atributos[$i]) . "());
+        ";
+        }
+        
+        $conteudo = $conteudo . "
+        \$stmt->bindValue(':" . $atributos[0] . "', \$" . $nomeNormal . "->get" . ucfirst($atributos[0]) . "());
+        ";
+        
+        $conteudo = $conteudo . "\$stmt->execute();
         return \$stmt->rowCount();
     }            ";
 
@@ -278,7 +287,6 @@ if (isset(\$_GET['function'])) {
 
         if (file_put_contents("./" . $semente->getNome() . "Controle.php", $conteudo, FILE_APPEND)) {
             header('location: ../index.php?msg=ok');
-
         } else {
             header('location: ../index.php?msg=erroCriaControle');
         }
