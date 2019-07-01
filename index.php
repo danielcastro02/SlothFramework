@@ -17,16 +17,8 @@ and open the template in the editor.
         include_once './Base/navPadrao.php';
         ?><main>
         </main>
-        <script>
-            $("#adiciona").click(function () {
-            $("#aumentar").append("<div class='input-field col s4'>\n\
-            <input  type='text' placeholder='Atributo' name='atributo[]'/>\n\
-            </div>                    <div class='input-field col s4'>\n\
-            <input  type='text' placeholder='Tipo' name='tipo[]'/>\n\
-            </div>\n\
-            <div class='input-field col s4'><input  type='text' placeholder='regra' name='regra[]'/></div>");
-            });
-
-        </script>
+        <?php
+        include_once './Base/footer.php';
+        ?>
     </body>
 </html>

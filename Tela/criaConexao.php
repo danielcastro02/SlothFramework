@@ -78,6 +78,11 @@ and open the template in the editor.
             }
             ?>
         </main>
+        
+        <?php
+        include_once '../Base/footer.php';
+        ?>
+        
         <script>
             $("#adiciona").click(function () {
             $("#aumentar").append("<div class='input-field col s4'>\n\
