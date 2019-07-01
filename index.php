@@ -40,7 +40,6 @@ and open the template in the editor.
                                 <label>Senha</label>
                             </div>
                         </div><div class="row center">
-                            <a href="#" id="adiciona" class="btn black">Adicionar atributo</a>
                             <input type="submit" class="btn black">
                         </div>
                     </form>
@@ -81,12 +80,12 @@ and open the template in the editor.
         </main>
         <script>
             $("#adiciona").click(function () {
-                $("#aumentar").append("<div class='input-field col s4'>\n\
-        <input  type='text' placeholder='Atributo' name='atributo[]'/>\n\
-</div>                    <div class='input-field col s4'>\n\
-<input  type='text' placeholder='Tipo' name='tipo[]'/>\n\
-</div>\n\
-<div class='input-field col s4'><input  type='text' placeholder='regra' name='regra[]'/></div>");
+            $("#aumentar").append("<div class='input-field col s4'>\n\
+            <input  type='text' placeholder='Atributo' name='atributo[]'/>\n\
+            </div>                    <div class='input-field col s4'>\n\
+            <input  type='text' placeholder='Tipo' name='tipo[]'/>\n\
+            </div>\n\
+            <div class='input-field col s4'><input  type='text' placeholder='regra' name='regra[]'/></div>");
             });
 
         </script>
