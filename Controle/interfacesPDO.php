@@ -29,23 +29,26 @@ class interfacesPDO {
         $tabela = $_POST['nome'];
         $usuario = $_POST['usuario'];
         $senha = $_POST['senha'];
+        $geradorPDO = new geradorPDO();
+        $bancoPDO = new bancoPDO();
+        $colunas = $bancoPDO->selectColunas($tabela);
+        $semente = new gerador();
+        $semente->setNome($tabela);
+        $atributos = [];
+        while ($linha = $colunas->fetch()) {
+            $atributos[] = $linha[0];
+        }
+        $semente->setAtributo($atributos);
         if (!realpath("../Modelo/" . ucfirst($tabela) . ".php")) {
-            $geradorPDO = new geradorPDO();
-            $bancoPDO = new bancoPDO();
-            $colunas = $bancoPDO->selectColunas($tabela);
-            $semente = new gerador();
-            $semente->setNome($tabela);
-            $atributos = [];
-            while ($linha = $colunas->fetch()) {
-                $atributos[] = $linha[0];
-            }
-            $semente->setAtributo($atributos);
+
             $geradorPDO->geraModelo($semente);
         }
 
         $pdoantiga = file_get_contents("../Controle/" . $tabela . "PDO.php");
         $pdoantigapartes = explode("/*login*/", $pdoantiga);
-        $pdoantiga = $pdoantigapartes[0] . $pdoantigapartes[2];
+        if (count($pdoantigapartes) > 1) {
+            $pdoantiga = $pdoantigapartes[0] . $pdoantigapartes[2];
+        }
         $pdoantiga = str_replace("/*chave*/}", "", $pdoantiga);
 
         $conteudo = $pdoantiga . "
@@ -132,19 +135,21 @@ if (isset(\$_GET['msg'])) {
 ?>
 ";
         file_put_contents("../Tela/login.php", $conteudo);
-        
+
         $navbar = file_get_contents("../Base/navBar.php");
-        $filtro = explode("<!--".$semente->getNome()."login-->", $navbar);
-        $navbar = $filtro[0].$filtro[2];
-        $partes = explode("<!--".$semente->getNome()."item-->", $navbar);
-        $conteudo = $partes[0]."
-            <!--".$semente->getNome()."login-->
+        $filtro = explode("<!--" . $semente->getNome() . "login-->", $navbar);
+        if (count($filtro) > 1) {
+            $navbar = $filtro[0] . $filtro[2];
+        }
+        $partes = explode("<!--" . $semente->getNome() . "item-->", $navbar);
+        $conteudo = $partes[0] . "
+            <!--" . $semente->getNome() . "login-->
                 <li><a href=\"<?php echo \$pontos; ?>./Tela/login.php\">Login</a></li>
-            <!--".$semente->getNome()."login-->
+            <!--" . $semente->getNome() . "login-->
                 
             <!--" . $semente->getNome() . "item-->
             <!--" . $semente->getNome() . "item-->
-".$partes[2];
+" . $partes[2];
         file_put_contents("../Base/navBar.php", $conteudo);
         header('location: ../Tela/login.php');
     }
@@ -161,11 +166,11 @@ if (isset(\$_GET['msg'])) {
         while ($linha = $colunas->fetch()) {
             $atributos[] = $linha[0];
         }
-         $semente = new gerador();
-            $semente->setNome($tabela);
-            $semente->setAtributo($atributos);
-        if(!realpath("../Controle/$tabela"."PDO.php")){
-            
+        $semente = new gerador();
+        $semente->setNome($tabela);
+        $semente->setAtributo($atributos);
+        if (!realpath("../Controle/$tabela" . "PDO.php")) {
+
             $geradorPDO->geraModelo($semente);
         }
         $pdoantiga = file_get_contents("../Controle/" . $tabela . "PDO.php");
@@ -188,11 +193,11 @@ if (isset(\$_GET['msg'])) {
         $conteudo = $conteudo . ");\n";
         if ($verificaDefault) {
             for ($i = 1; $i < count($atributos); $i++) {
-                if($atributos[$i]!=$senha){
-                $conteudo = $conteudo . "
+                if ($atributos[$i] != $senha) {
+                    $conteudo = $conteudo . "
             \$stmt->bindValue(':" . $atributos[$i] . "', \$" . $nomeNormal . "->get" . ucfirst($atributos[$i]) . "());    
         ";
-                }else{
+                } else {
                     $conteudo = $conteudo . "
             \$stmt->bindValue(':" . $atributos[$i] . "', \$senhamd5);    
         ";
@@ -245,8 +250,8 @@ if (isset(\$_GET['msg'])) {
                         </div>";
             }
         }
-        
-        $conteudo = $conteudo."
+
+        $conteudo = $conteudo . "
                         <div class = \"input-field col s6\">
                             <input type=\"password\" name=\"senha1\">
                             <label>Senha</label>
@@ -278,21 +283,21 @@ if (isset(\$_GET['msg'])) {
 </html>
 
 ";
-        
+
         file_put_contents("../Tela/registroUsuario.php", $conteudo);
-        
+
         $navbar = file_get_contents("../Base/navBar.php");
-        $filtro = explode("<!--".$semente->getNome()."registro-->", $navbar);
-        $navbar = $filtro[0].$filtro[2];
-        $partes = explode("<!--".$semente->getNome()."item-->", $navbar);
-        $conteudo = $partes[0]."
-            <!--".$semente->getNome()."registro-->
+        $filtro = explode("<!--" . $semente->getNome() . "registro-->", $navbar);
+        $navbar = $filtro[0] . $filtro[2];
+        $partes = explode("<!--" . $semente->getNome() . "item-->", $navbar);
+        $conteudo = $partes[0] . "
+            <!--" . $semente->getNome() . "registro-->
                 <li><a href=\"<?php echo \$pontos; ?>./Tela/registroUsuario.php\">Registro</a></li>
-            <!--".$semente->getNome()."registro-->
+            <!--" . $semente->getNome() . "registro-->
                 
             <!--" . $semente->getNome() . "item-->
             <!--" . $semente->getNome() . "item-->
-".$partes[2];
+" . $partes[2];
         file_put_contents("../Base/navBar.php", $conteudo);
         header('location: ../Tela/registroUsuario.php');
     }
