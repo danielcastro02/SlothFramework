@@ -9,14 +9,14 @@ and open the template in the editor.
         <meta charset="UTF-8">
         <title></title>
         <?php
-        include_once './Base/header.php';
+        include_once '../Base/header.php';
         ?>
     </head>
     <body>
         <?php
-        include_once './Base/navPadrao.php';
+        include_once '../Base/navPadrao.php';
         ?><main><?php
-            if (!realpath("./Controle/Conexao.php")) {
+            if (!realpath("../Controle/Conexao.php")) {
                 ?>
 
                 <div class="row">
@@ -78,9 +78,11 @@ and open the template in the editor.
             }
             ?>
         </main>
-         <?php
+        
+        <?php
         include_once '../Base/footer.php';
         ?>
+        
         <script>
             $("#adiciona").click(function () {
             $("#aumentar").append("<div class='input-field col s4'>\n\

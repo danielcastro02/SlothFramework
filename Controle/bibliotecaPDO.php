@@ -1,31 +1,41 @@
 <?php
 
-$pontos = "";
-if (realpath("./index.php")) {
-    $pontos = './';
-} else {
-    if (realpath("../index.php")) {
-        $pontos = '../';
-    } else {
-        if (realpath("../../index.php")) {
-            $pontos = '../../';
-        }
-    }
-}
 
 class bibliotecaPDO {
 
+    private $pontos;
+
+    public function __construct() {
+        if (realpath("./index.php")) {
+            $this->pontos = './';
+        } else {
+            if (realpath("../index.php")) {
+                $this->pontos = '../';
+            } else {
+                if (realpath("../../index.php")) {
+                    $this->pontos = '../../';
+                }
+            }
+        }
+    }
+
     function composer() {
-        shell_exec("..\Scripts\composer.bat");
-        header('location: ../index.php?msg=instalado');
+        if (!realpath($this->pontos . "Scripts/composer.bat")) {
+            header("location: " . $this->pontos . "Tela/solicitaPhp.php");
+        } else {
+            shell_exec("..\Scripts\composer.bat");
+            header('location: ../index.php?msg=instalado');
+        }
     }
 
     function html2pdf() {
-        echo "<h1>Instalando...</h1>";
-        set_time_limit(600);
-        shell_exec("..\Scripts\html2pdf.bat");
-        set_time_limit(30);
-        $conteudo = "<?php
+        if (!realpath($this->pontos . "Scripts/composer.bat")) {
+            header("location: " . $this->pontos . "Tela/solicitaPhp.php");
+        } else {
+            set_time_limit(600);
+            shell_exec("..\Scripts\html2pdf.bat");
+            set_time_limit(30);
+            $conteudo = "<?php
     require '../vendor/autoload.php';
 
     use Spipu\Html2Pdf\Html2Pdf;
@@ -33,16 +43,20 @@ class bibliotecaPDO {
     \$html2pdf = new Html2Pdf();
     \$html2pdf->writeHTML('<h1>HelloWorld</h1>This is my first test');
     \$html2pdf->output();";
-        mkdir("../Exemplo");
-        file_put_contents("../Exemplo/exemplohtml2pdf.php", $conteudo);
-        header('location: ../index.php?msg=instalado');
+            mkdir("../Exemplo");
+            file_put_contents("../Exemplo/exemplohtml2pdf.php", $conteudo);
+            header('location: ../index.php?msg=instalado');
+        }
     }
 
-    function phpmailer(){
-        set_time_limit(600);
-        shell_exec("..\Scripts\phpmailer.bat");
-        set_time_limit(30);
-        $conteudo = "<?php
+    function phpmailer() {
+        if (!realpath($this->pontos . "Scripts/composer.bat")) {
+            header("location: " . $this->pontos . "Tela/solicitaPhp.php");
+        } else {
+            set_time_limit(600);
+            shell_exec("..\Scripts\phpmailer.bat");
+            set_time_limit(30);
+            $conteudo = "<?php
 // Import PHPMailer classes into the global namespace
 // These must be at the top of your script, not inside a function
 use PHPMailer\PHPMailer\PHPMailer;
@@ -88,8 +102,10 @@ try {
 } catch (Exception \$e) {
     echo \"Message could not be sent. Mailer Error: {\$mail->ErrorInfo}\";
 }";
-        mkdir("../Exemplo");
-        file_put_contents("../Exemplo/exemplophpmailer.php", $conteudo);
-        header('location: ../index.php?msg=instalado');
+            mkdir("../Exemplo");
+            file_put_contents("../Exemplo/exemplophpmailer.php", $conteudo);
+            header('location: ../index.php?msg=instalado');
+        }
     }
+
 }
