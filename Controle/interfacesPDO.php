@@ -44,10 +44,10 @@ class interfacesPDO {
         }
 
         $pdoantiga = file_get_contents("../Controle/" . $tabela . "PDO.php");
-        $pdoantigapartes = explode("/*login*/", $pdoantiga); 
-        $pdoantiga = $pdoantigapartes[0].$pdoantigapartes[2];
+        $pdoantigapartes = explode("/*login*/", $pdoantiga);
+        $pdoantiga = $pdoantigapartes[0] . $pdoantigapartes[2];
         $pdoantiga = str_replace("/*chave*/}", "", $pdoantiga);
-        
+
         $conteudo = $pdoantiga . "
             /*login*/
     public function login() {
@@ -94,7 +94,7 @@ class interfacesPDO {
         ?>
     <body class=\"homeimg\">
         <?php
-        include_once '../Base/navPadrao.php';
+        include_once '../Base/navBar.php';
         ?>
         <main>
             <div class=\"row\" style=\"margin-top: 15vh;\">
@@ -109,11 +109,12 @@ class interfacesPDO {
                             <input type=\"password\" name=\"$senha\">
                             <label>Senha</label>
                         </div>
-                        <div class=\"row center\">
-                            <a href=\"../index.php\" class=\"corPadrao3 btn\">Voltar</a>
-                            <input type=\"submit\" class=\"btn corPadrao2\" value=\"Login\">
-                        </div>
                     </div>
+                    <div class=\"row center\">
+                        <a href=\"../index.php\" class=\"corPadrao3 btn\">Voltar</a>
+                        <input type=\"submit\" class=\"btn corPadrao2\" value=\"Login\">
+                    </div>
+                    
                 </form>
             </div>
         </main>
@@ -132,6 +133,67 @@ if (isset(\$_GET['msg'])) {
 ";
         file_put_contents("../Tela/login.php", $conteudo);
         header('location: ../Tela/login.php');
+    }
+
+    function insertUsuario() {
+        $tabela = $_POST['nome'];
+        $usuario = $_POST['usuario'];
+        $senha = $_POST['senha'];
+        $bancoPDO = new bancoPDO();
+        $nome = ucfirst($tabela);
+        $nomeNormal = $tabela;
+        $colunas = $bancoPDO->selectColunas($tabela);
+        while ($linha = $colunas->fetch()) {
+            $atributos[] = $linha[0];
+        }
+
+        $pdoantiga = file_get_contents("../Controle/" . $tabela . "PDO.php");
+        $pdoantigapartes = explode("/*inserir*/", $pdoantiga);
+        $conteudo = $pdoantigapartes[0] . "
+             /*inserir*/
+    function inserir" . $nome . "() {
+        \$" . $nomeNormal . " = new " . $nomeNormal . "(\$_POST);
+        \$con = new conexao();
+        \$pdo = \$con->getConexao();
+        \$stmt = \$pdo->prepare('insert into " . $nome . " values(";
+
+        $buscaRegra = explode(" ", $semente->getRegra()[0]);
+        $verificaDefault = false;
+        if (in_array("auto_increment", $buscaRegra) || in_array("AUTO_INCREMENT", $buscaRegra)) {
+            $conteudo = $conteudo . "default , ";
+            $verificaDefault = true;
+        } else {
+            $conteudo = $conteudo . ":" . $semente->getAtributo()[0] . " , ";
+        }
+
+        for ($i = 1; $i < (count($atributos) - 1); $i++) {
+            $conteudo = $conteudo . ":" . $atributos[$i] . " , ";
+        }
+        $conteudo = $conteudo . ":" . $atributos[$i] . ");' ";
+        $conteudo = $conteudo . ");\n";
+        if ($verificaDefault) {
+            for ($i = 1; $i < count($atributos); $i++) {
+                $conteudo = $conteudo . "
+        \$stmt->bindValue(':" . $atributos[$i] . "', \$" . $nomeNormal . "->get" . ucfirst($atributos[$i]) . "());    
+        ";
+            }
+        } else {
+            for ($i = 0; $i < count($atributos); $i++) {
+                $conteudo = $conteudo . "
+        \$stmt->bindValue(':" . $atributos[$i] . "', \$" . $nomeNormal . "->get" . ucfirst($atributos[$i]) . "());    
+        ";
+            }
+        }
+
+        $conteudo = $conteudo . "
+        if(\$stmt->execute()){ 
+            header('location: ../index.php?msg=" . $nomeNormal . "Inserido');
+        }else{
+            header('location: ../index.php?msg=" . $nomeNormal . "ErroInsert');
+        }
+    }
+    /*inserir*/
+                " . $pdoantigapartes[2];
     }
 
 }
