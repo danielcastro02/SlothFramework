@@ -1,2 +1,2 @@
 cd..
-composer require phpmailer/phpmailer
+c:\xampp\php\php.exe composer.phar require phpmailer/phpmailer
