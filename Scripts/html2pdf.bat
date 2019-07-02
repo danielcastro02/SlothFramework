@@ -1,2 +1,2 @@
 cd..
-c:\xampp\php\php.exe composer.phar require spipu/html2pdf
+php composer.phar require spipu/html2pdf
