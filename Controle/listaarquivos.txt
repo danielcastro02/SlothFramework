@@ -20,4 +20,5 @@
 ../Controle/interfacesControle.php;
 ../Controle/interfacesPDO.php;
 ../Tela/carregaColunas.php;
-../Tela/criaLogin.php
+../Tela/criaLogin.php;
+../Base/navPadrao.php
