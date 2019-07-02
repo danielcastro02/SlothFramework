@@ -42,4 +42,29 @@ class bancoPDO {
         }
     }
 
+    function criarEspecifico() {
+        $nomeTabela = $_POST['nome'];
+        $geradorPDO = new geradorPDO();
+        $con = new conexao();
+        $pdo = $con->getConexao();
+        $stmt2 = $pdo->prepare("show columns from " . $nomeTabela);
+        $stmt2->execute();
+        $semente = new gerador();
+        $semente->setNome($nomeTabela);
+        $atrib = [];
+        while ($atributos = $stmt2->fetch()) {
+            $atrib[] = $atributos[0];
+        }
+        $semente->setAtributo($atrib);
+        $geradorPDO->geraModelo($semente);
+    }
+    
+    function selectTables(){
+        $con = new conexao();
+        $pdo = $con->getConexao();
+        $stmt = $pdo->prepare("show tables");
+        $stmt->execute();
+        return $stmt;
+    }
+    
 }

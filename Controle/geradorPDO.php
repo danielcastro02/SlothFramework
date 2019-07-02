@@ -1,11 +1,27 @@
 <?php
 
-include_once '../Modelo/Gerador.php';
+if (realpath("./index.php")) {
+    include_once "./Modelo/Gerador.php";
+} else {
+    if (realpath("../index.php") ) {
+        include_once "../Modelo/Gerador.php";
+    } else {
+        if (realpath("../../index.php")) {
+            include_once "../../Modelo/Gerador.php";
+        }
+    }
+}
 
-try {
-    include_once './conexao.php';
-} catch (Exception $ex) {
-    
+if (realpath("./Controle/conexao.php")) {
+    include_once "./Controle/conexao.php";
+} else {
+    if (realpath("../Controle/conexao.php") ) {
+        include_once "../Controle/conexao.php";
+    } else {
+        if (realpath("../../Controle/conexao.php")) {
+            include_once "../../Controle/conexao.php";
+        }
+    }
 }
 
 class geradorPDO {

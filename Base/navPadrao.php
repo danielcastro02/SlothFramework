@@ -46,13 +46,37 @@ if (realpath("./index.php")) {
                 </ul>
 
             </li>
+            <li>
+                <a href="<?php echo $pontos; ?>./Controle/autoDelete.php" id="autodelete">Auto Destruir</a>
+            </li>
         </ul>
     </div>
 
 </nav>
 
 <script>
-
+    $("#autodelete").click(function () {
+        if (confirm("Você tem certeza absoluta do que esta fazendo???")) {
+            if (confirm("Isto vai apagar todo o framework, você realmente tem ceteza???")) {
+                if (confirm("Absoluta???")) {
+                    alert("ok...");
+                    alert("Ok");
+                    alert("OK!!!");
+                    if (confirm("Tem certeza que tem certeza???")) {
+                        return true;
+                    }else{
+                        return false;
+                    }
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    });
     $('.dropdown-trigger').dropdown({
         coverTrigger: false,
     });

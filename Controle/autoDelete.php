@@ -7,4 +7,5 @@ foreach ($vetor as $arquivo){
     unlink($arquivo2);
 }
 file_put_contents("../index.php", "<h1>HelloWorld</h1>");
+rmdir("../Scripts");
 header("location: ../index.php");

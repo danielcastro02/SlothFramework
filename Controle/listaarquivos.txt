@@ -15,4 +15,5 @@
 ../Controle/bancoPDO.php;
 ../Modelo/Gerador.php;
 ../Controle/autoDelete.php;
-../Controle/listaarquivos.txt
+../Controle/listaarquivos.txt;
+../Tela/criaObjeto.php
