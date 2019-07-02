@@ -22,4 +22,5 @@
 ../Tela/carregaColunas.php;
 ../Tela/criaLogin.php;
 ../Base/navPadrao.php;
-../Tela/criaRegistroUsuario.php
+../Tela/criaRegistroUsuario.php;
+../Scripts/text.txt
