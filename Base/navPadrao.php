@@ -21,7 +21,7 @@ if (realpath("./index.php")) {
                 <a class='dropdown-trigger center' style="background-color: transparent" data-hover="true" href='#' data-target='dropdown4'>Interfaces</a>
                 <ul id='dropdown4' class='dropdown-content'>
                     <li><a href="<?php echo $pontos; ?>./Tela/criaLogin.php">Criar Login</a></li>
-                    <li><a href="<?php echo $pontos; ?>./Tela/criaregistroUsuario.php">Criar Registro Usuario</a></li>
+                    <li><a href="<?php echo $pontos; ?>./Tela/criaRegistroUsuario.php">Criar Registro Usuario</a></li>
                     <li class="divider"></li>
                 </ul>
 
