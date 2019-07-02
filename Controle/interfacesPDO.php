@@ -232,7 +232,7 @@ if (isset(\$_GET['msg'])) {
         include_once '../Base/navBar.php';
         ?>
         <main>
-            <div class=\"row\" style=\"margin-top: 15vh;\">
+            <div class=\"row\" style=\"margin-top: 10vh;\">
                 <form action=\"../Controle/" . $tabela . "Controle.php?function=inserir$nome\" class=\"card col l8 offset-l2 m10 offset-m1 s10 offset-s1\" method=\"post\">
                     <div class=\"row center\">
                         <h4 class=\"textoCorPadrao2\">Registre-se</h4>";
