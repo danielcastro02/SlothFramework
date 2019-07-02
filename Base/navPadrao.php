@@ -18,6 +18,14 @@ if (realpath("./index.php")) {
         <a href="<?php echo $pontos; ?>./Tela/home.php" class="brand-logo center">SlothFramework</a>
         <ul class="right hide-on-med-and-down">
             <li>
+                <a class='dropdown-trigger center' style="background-color: transparent" data-hover="true" href='#' data-target='dropdown4'>Interfaces</a>
+                <ul id='dropdown4' class='dropdown-content'>
+                    <li><a href="<?php echo $pontos; ?>./Tela/criaLogin.php">Criar Login</a></li>
+                    <li class="divider"></li>
+                </ul>
+
+            </li>
+            <li>
                 <a class='dropdown-trigger center' style="background-color: transparent" data-hover="true" href='#' data-target='dropdown1'>SQL</a>
                 <ul id='dropdown1' class='dropdown-content'>
                     <li><a href="<?php echo $pontos; ?>./Tela/criaConexao.php">Criar Conexão</a></li>

@@ -20,5 +20,4 @@ if (realpath("./index.php")) {
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <script type="text/javascript" src="<?php echo $pontos; ?>js/jquery-3.3.1.min.js"></script>
 <script type="text/javascript" src="<?php echo $pontos; ?>js/materialize.js"></script>
-<script type="text/javascript" src="<?php echo $pontos; ?>/js/main.js" ></script>
 <script type="text/javascript" src="<?php echo $pontos; ?>/js/chart.bundle.min.js" ></script>

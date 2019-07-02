@@ -67,4 +67,12 @@ class bancoPDO {
         return $stmt;
     }
     
+    function selectColunas($tabela){
+        $con = new conexao();
+        $pdo = $con->getConexao();
+        $stmt = $pdo->prepare("show columns from " . $tabela);
+        $stmt->execute();
+        return $stmt;
+    }
+    
 }

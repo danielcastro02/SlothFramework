@@ -16,4 +16,8 @@
 ../Modelo/Gerador.php;
 ../Controle/autoDelete.php;
 ../Controle/listaarquivos.txt;
-../Tela/criaObjeto.php
+../Tela/criaObjeto.php;
+../Controle/interfacesControle.php;
+../Controle/interfacesPDO.php;
+../Tela/carregaColunas.php;
+../Tela/criaLogin.php

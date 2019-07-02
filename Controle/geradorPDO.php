@@ -306,7 +306,7 @@ class " . $nome . "PDO{
         \$stmt->execute();
         return \$stmt->rowCount();
     }
-}
+/*chave*/}
 ";
         if (file_put_contents("./" . $nomeNormal . "PDO.php", $conteudo, FILE_APPEND)) {
             $this->criaControle($semente);

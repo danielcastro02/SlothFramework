@@ -30,7 +30,7 @@ footer{
 }
 
 */.homeimg{
-    background-image: url('../Img/Predio_final.jpg');
+    background-image: url('../Img/bg1.jpg');
     background-size: 100%;
     background-attachment: fixed;
 }/*
@@ -68,4 +68,33 @@ main {
 
 ::-webkit-scrollbar {
     width: 0px;
+}
+
+
+.corPadrao1{
+    /*Branco*/
+    background: #FFFFFF;
+}
+
+.corPadrao2{
+    /*Azul Escuro*/
+    background: #1D345C;
+}
+
+.corPadrao3{
+    /*Laranja*/
+    background: #E25211;
+    font-weight: bold;
+}
+
+.textoCorPadrao2{
+    color: #1D345C;
+    font-weight: bold;
+
+}
+
+.textoCorPadrao3{
+    color: #E25211;
+    font-weight: bold;
+    cursor: default;
 }
