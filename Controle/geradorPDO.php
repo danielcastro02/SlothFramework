@@ -342,7 +342,7 @@ class " . $nome . "PDO{
     public function update" . $nome . "(" . $nome . " $" . $nome . "){        
         \$con = new conexao();
         \$pdo = \$con->getConexao();
-        \$stmt = \$pdo->prepare('update" . $nomeNormal . "set ";
+        \$stmt = \$pdo->prepare('update " . $nomeNormal . "set ";
         for ($i = 1; $i < (count($atributos) - 1); $i++) {
             $conteudo = $conteudo . $atributos[$i] . " = :" . $atributos[$i] . " , ";
         }
