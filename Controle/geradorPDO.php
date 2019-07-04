@@ -375,6 +375,13 @@ class " . $nome . "PDO{
         \$stmt->execute();
         return \$stmt->rowCount();
     }
+    
+    public function deletar(){
+        \$this->delete$nome(\$_GET['id']);
+        header('location: ../Tela/listar$nome.php');
+    }
+
+
 /*chave*/}
 ";
         if (file_put_contents("./" . $nomeNormal . "PDO.php", $conteudo, FILE_APPEND)) {
@@ -412,7 +419,7 @@ if (isset(\$_GET['function'])) {
 
 ";
 
-        if (file_put_contents("./" . $semente->getNome() . "Controle.php", $conteudo, FILE_APPEND)) {
+        if (file_put_contents("./" . $semente->getNome() . "Controle.php", $conteudo)) {
             header('location: ../index.php?msg=ok');
         } else {
             header('location: ../index.php?msg=erroCriaControle');

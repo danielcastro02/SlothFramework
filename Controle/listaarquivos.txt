@@ -23,4 +23,7 @@
 ../Tela/criaLogin.php;
 ../Base/navPadrao.php;
 ../Tela/criaRegistroUsuario.php;
-../Scripts/text.txt
+../Scripts/text.txt;
+../Tela/criaTelaRegsistro.php;
+../Tela/criaListagem.php;
+../Tela/criaTelaEditar.php

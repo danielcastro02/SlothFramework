@@ -24,6 +24,7 @@ if (realpath("./index.php")) {
                     <li><a href="<?php echo $pontos; ?>./Tela/criaRegistroUsuario.php">Criar Registro Usuario</a></li>
                     <li><a href="<?php echo $pontos; ?>./Tela/criaTelaRegistro.php">Criar Registros</a></li>
                     <li><a href="<?php echo $pontos; ?>./Tela/criaTelaEditar.php">Criar Editar Registros</a></li>
+                    <li><a href="<?php echo $pontos; ?>./Tela/criaListagem.php">Criar Listagem</a></li>
                     <li class="divider"></li>
                 </ul>
 
