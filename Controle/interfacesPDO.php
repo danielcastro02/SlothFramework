@@ -302,4 +302,122 @@ if (isset(\$_GET['msg'])) {
         header('location: ../Tela/registroUsuario.php');
     }
 
+    public function telaInsert() {
+        $tabela = $_POST['nome'];
+        $bancoPDO = new bancoPDO();
+        $geradorPDO = new geradorPDO();
+        $nome = ucfirst($tabela);
+        $nomeNormal = $tabela;
+        $colunas = $bancoPDO->selectColunas($tabela);
+        while ($linha = $colunas->fetch()) {
+            $atributos[] = $linha[0];
+        }
+        $semente = new gerador();
+        $semente->setNome($tabela);
+        $semente->setAtributo($atributos);
+        if (!realpath("../Controle/$tabela" . "PDO.php")) {
+
+            $geradorPDO->geraModelo($semente);
+        }
+        $pdoantiga = file_get_contents("../Controle/" . $tabela . "PDO.php");
+        $pdoantigapartes = explode("/*inserir*/", $pdoantiga);
+        $conteudo = $pdoantigapartes[0] . "
+             /*inserir*/
+    function inserir" . $nome . "() {
+        \$" . $nomeNormal . " = new " . $nomeNormal . "(\$_POST);
+            \$con = new conexao();
+            \$pdo = \$con->getConexao();
+            \$stmt = \$pdo->prepare('insert into " . $nome . " values(";
+        $conteudo = $conteudo . "default , ";
+        $verificaDefault = true;
+        for ($i = 1; $i < (count($atributos) - 1); $i++) {
+            $conteudo = $conteudo . ":" . $atributos[$i] . " , ";
+        }
+        $conteudo = $conteudo . ":" . $atributos[$i] . ");' ";
+        $conteudo = $conteudo . ");\n";
+        if ($verificaDefault) {
+            for ($i = 1; $i < count($atributos); $i++) {
+                    $conteudo = $conteudo . "
+            \$stmt->bindValue(':" . $atributos[$i] . "', \$" . $nomeNormal . "->get" . ucfirst($atributos[$i]) . "());    
+        ";
+            }
+        } else {
+            for ($i = 0; $i < count($atributos); $i++) {
+                $conteudo = $conteudo . "
+            \$stmt->bindValue(':" . $atributos[$i] . "', \$" . $nomeNormal . "->get" . ucfirst($atributos[$i]) . "());    
+        ";
+            }
+        }
+        $conteudo = $conteudo . "
+            if(\$stmt->execute()){ 
+                header('location: ../index.php?msg=" . $nomeNormal . "Inserido');
+            }else{
+                header('location: ../index.php?msg=" . $nomeNormal . "ErroInsert');
+            }
+    }
+    /*inserir*/
+                " . $pdoantigapartes[2];
+        file_put_contents("../Controle/" . $nomeNormal . "PDO.php", $conteudo);
+
+        $conteudo = "<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset=\"UTF-8\">
+        <title>Login</title>
+        <?php
+        include_once '../Base/header.php';
+        ?>
+    <body class=\"homeimg\">
+        <?php
+        include_once '../Base/navBar.php';
+        ?>
+        <main>
+            <div class=\"row\" style=\"margin-top: 10vh;\">
+                <form action=\"../Controle/" . $tabela . "Controle.php?function=inserir$nome\" class=\"card col l8 offset-l2 m10 offset-m1 s10 offset-s1\" method=\"post\">
+                    <div class=\"row center\">
+                        <h4 class=\"textoCorPadrao2\">Cadastrar $nome</h4>";
+        for ($i = 1; $i < (count($atributos)); $i++) {
+            if ($atributos[$i] != $senha) {
+                $conteudo = $conteudo . "
+                        <div class=\"input-field col s6\">
+                            <input type=\"text\" name=\"$atributos[$i]\">
+                            <label>" . $atributos[$i] . "</label>
+                        </div>";
+            }
+        }
+
+        $conteudo = $conteudo . "
+                    <div class=\"row center\">
+                        <a href=\"../index.php\" class=\"corPadrao3 btn\">Voltar</a>
+                        <input type=\"submit\" class=\"btn corPadrao2\" value=\"Cadastrar\">
+                    </div>
+                </form>
+            </div>
+        </main>
+        <?php
+        include_once '../Base/footer.php';
+        ?>
+    </body>
+</html>
+
+";
+
+        file_put_contents("../Tela/registro$nome.php", $conteudo);
+
+        $navbar = file_get_contents("../Base/navBar.php");
+        $filtro = explode("<!--" . $semente->getNome() . "registro-->", $navbar);
+        $navbar = $filtro[0] . $filtro[2];
+        $partes = explode("<!--" . $semente->getNome() . "item-->", $navbar);
+        $conteudo = $partes[0] . "
+            <!--" . $semente->getNome() . "registro-->
+                <li><a href=\"<?php echo \$pontos; ?>./Tela/registro$nome.php\">Registro</a></li>
+            <!--" . $semente->getNome() . "registro-->
+                
+            <!--" . $semente->getNome() . "item-->
+            <!--" . $semente->getNome() . "item-->
+" . $partes[2];
+        file_put_contents("../Base/navBar.php", $conteudo);
+        header("location: ../Tela/registro$nome.php");
+    }
+
 }
