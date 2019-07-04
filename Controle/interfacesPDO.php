@@ -315,7 +315,10 @@ if (isset(\$_GET['msg'])) {
             $atributos[] = $linha[0];
         }
         $semente->setAtributo($atributos);
-        
+        if (!realpath("../Controle/$tabela" . "PDO.php")) {
+
+            $geradorPDO->geraModelo($semente);
+        }
         $conteudo = "<!DOCTYPE html>
 <html>
     <head>
