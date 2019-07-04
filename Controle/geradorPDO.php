@@ -339,7 +339,7 @@ class " . $nome . "PDO{
 
 
         $conteudo = " 
-    public function update" . $nome . "(" . $nome . " $" . $nome . "){        
+    public function update" . $nome . "(" . $nome . " $" . $nomeNormal . "){        
         \$con = new conexao();
         \$pdo = \$con->getConexao();
         \$stmt = \$pdo->prepare('update " . $nomeNormal . " set ";

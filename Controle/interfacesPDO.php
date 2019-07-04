@@ -337,7 +337,7 @@ if (isset(\$_GET['msg'])) {
         $conteudo = $conteudo . ");\n";
         if ($verificaDefault) {
             for ($i = 1; $i < count($atributos); $i++) {
-                    $conteudo = $conteudo . "
+                $conteudo = $conteudo . "
             \$stmt->bindValue(':" . $atributos[$i] . "', \$" . $nomeNormal . "->get" . ucfirst($atributos[$i]) . "());    
         ";
             }
@@ -418,6 +418,99 @@ if (isset(\$_GET['msg'])) {
 " . $partes[2];
         file_put_contents("../Base/navBar.php", $conteudo);
         header("location: ../Tela/registro$nome.php");
+    }
+
+    public function telaEditar() {
+        $tabela = $_POST['nome'];
+        $bancoPDO = new bancoPDO();
+        $geradorPDO = new geradorPDO();
+        $nome = ucfirst($tabela);
+        $nomeNormal = $tabela;
+        $colunas = $bancoPDO->selectColunas($tabela);
+        while ($linha = $colunas->fetch()) {
+            $atributos[] = $linha[0];
+        }
+        $semente = new gerador();
+        $semente->setNome($tabela);
+        $semente->setAtributo($atributos);
+        if (!realpath("../Controle/$tabela" . "PDO.php")) {
+
+            $geradorPDO->geraModelo($semente);
+        }
+        $pdoantiga = file_get_contents("../Controle/" . $tabela . "PDO.php");
+        $pdoantigapartes = explode("/*chave*/", $pdoantiga);
+        $conteudo = $pdoantigapartes[0] . "
+            /*editar*/
+            function editar" . "() {
+                \$" . $nomeNormal . " = new " . $nome . "(\$_POST);
+                    if(\$this->update$nome(\$" . $nomeNormal . ") > 0){
+                        header('location: ../index.php?msg=" . $nomeNormal . "Alterado');
+                    } else {
+                        header('location: ../index.php?msg=" . $nomeNormal . "ErroAlterar');
+                    }
+            }
+            /*editar*/
+            /*chave*/
+            }
+                ";
+        file_put_contents("../Controle/" . $nomeNormal . "PDO.php", $conteudo);
+
+        $conteudo = "<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset=\"UTF-8\">
+        <title>Login</title>
+        <?php
+        include_once '../Base/header.php';
+        ?>
+    <body class=\"homeimg\">
+        <?php
+        include_once '../Base/navBar.php';
+        ?>
+        <?php
+        include_once '../Controle/" . $nomeNormal . "PDO.php';
+        \$" . $nome . " = new " . $nomeNormal . "PDO();
+            \$stmt = $" . $nome . "->select" . $nome . ucfirst($atributos[0]) . "(\$_GET['id']);
+                \$nomeNormal = new " . $nome ."(\$stmt->fetch());
+        ?>
+        <main>
+            <div class=\"row\" style=\"margin-top: 10vh;\">
+                <form action=\"../Controle/" . $tabela . "Controle.php?function=editar\" class=\"card col l8 offset-l2 m10 offset-m1 s10 offset-s1\" method=\"post\">
+                    <div class=\"row center\">
+                        <h4 class=\"textoCorPadrao2\">Editar $nome</h4>";
+        for ($i = 0; $i < (count($atributos)); $i++) {
+            if ($i == 0) {
+                $conteudo = $conteudo . "
+                        <div class=\"input-field col s6\" hidden>
+                            <input type=\"text\" name=\"$atributos[$i]\" value=\"<?= \$nomeNormal->get". ucfirst($atributos[$i])."() ?>\">
+                            <label>" . $atributos[$i] . "</label>
+                        </div>";
+            } else {
+            $conteudo = $conteudo . "
+                        <div class=\"input-field col s6\">
+                            <input type=\"text\" name=\"$atributos[$i]\" value=\"<?= \$nomeNormal->get". ucfirst($atributos[$i])."() ?>\">
+                            <label>" . $atributos[$i] . "</label>
+                        </div>";
+            }
+        }
+
+        $conteudo = $conteudo . "
+                    <div class=\"row center\">
+                        <a href=\"../index.php\" class=\"corPadrao3 btn\">Voltar</a>
+                        <input type=\"submit\" class=\"btn corPadrao2\" value=\"Alterar\">
+                    </div>
+                </form>
+            </div>
+        </main>
+        <?php
+        include_once '../Base/footer.php';
+        ?>
+    </body>
+</html>
+
+";
+
+        file_put_contents("../Tela/editar$nome.php", $conteudo);
     }
 
 }
