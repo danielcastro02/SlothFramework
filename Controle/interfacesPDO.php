@@ -301,5 +301,99 @@ if (isset(\$_GET['msg'])) {
         file_put_contents("../Base/navBar.php", $conteudo);
         header('location: ../Tela/registroUsuario.php');
     }
+    
+    
+    function criarListagem(){
+        $semente = new gerador();
+        $semente->setNome($_POST['nome']);
+        $bancoPDO = new bancoPDO();
+        $geradorPDO = new geradorPDO();
+        $nomeMaiuscula = ucfirst($semente->getNome());
+        $nomeNormal = $semente->getNome();
+        $colunas = $bancoPDO->selectColunas($semente->getNome());
+        while ($linha = $colunas->fetch()) {
+            $atributos[] = $linha[0];
+        }
+        $semente->setAtributo($atributos);
+        
+        $conteudo = "<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset=\"UTF-8\">
+        <title>Listagem $nomeMaiuscula</title>
+        <?php
+            include_once '../Base/header.php';
+            include_once '../Controle/".$nomeNormal."PDO.php';
+            include_once '../Modelo/".$nomeMaiuscula.".php';
+            \$".$nomeNormal."PDO = new ".$nomeNormal."PDO();
+        ?>
+        <body class=\"homeimg\">
+        <?php
+        include_once '../Base/navBar.php';
+        ?>
+        <main>
+            <div class=\"row \" style=\"margin-top: 5vh;\">
+                <table class=\" card col s10 offset-s1 center\">
+                <h4 class='center'>Listagem $nomeMaiuscula</h4>
+                    <tr class=\"center\">
+";
+        foreach($atributos as $att){
+            $conteudo = $conteudo."
+                        <td class='center'>".ucfirst($att)."</td>";
+        }
+        $conteudo = $conteudo."
+                        <td class='center'>Editar</td>
+                        <td class='center'>Excluir</td>
+                    </tr>
+                    <?php
+                    \$stmt = \$".$nomeNormal."PDO->select".$nomeMaiuscula."();
+                        
+                    if (\$stmt) {
+                        while (\$linha = \$stmt->fetch()) {
+                            \$".$nomeNormal." = new ".$nomeNormal."(\$linha);
+                            ?>
+                        <tr>";
+        foreach($atributos as $att){
+            $conteudo = $conteudo."
+                            <td class=\"center\"><?php echo \$".$nomeNormal."->get". ucfirst($att)."()?></td>";
+        }
+        $conteudo = $conteudo."
+                            <td class = 'center'><a href=\"./editar".$nomeMaiuscula.".php?id=<?php echo \$".$nomeNormal."->get".$atributos[0]."()?>\">Editar</a></td>
+                            <td class=\"center\"><a href=\"../Controle/".$nomeNormal."Controle.php?function=deletar&id=<?php echo \$".$nomeNormal."->get".$atributos[0]."()?>\">Excluir</a></td>
+                        </tr>
+                                <?php
+                        }
+                    }
+                    ?>
+                    </table>
+            </div>
+        </main>
+        <?php
+        include_once '../Base/footer.php';
+        ?>
+    </body>
+</html>
+
+";
+        file_put_contents("../Tela/listagem".$nomeMaiuscula.".php", $conteudo);
+        
+        $navbar = file_get_contents("../Base/navBar.php");
+        $teste = explode("<!--" . $semente->getNome() . "listar-->", $navbar);
+        if(strpos($navbar, "<!--" . $semente->getNome() . "listar-->")!==false){
+            $navbar = $teste[0].$teste[2];
+        }
+        $partes = explode("<!--".$semente->getNome()."item-->", $navbar);
+        $conteudo = $partes[0]."
+             <!--" . $semente->getNome() . "listar-->
+                <li><a href=\"<?php echo \$pontos; ?>./Tela/listagem".$nomeMaiuscula.".php\">Listar</a></li>
+            <!--" . $semente->getNome() . "listar-->
+                
+            <!--" . $semente->getNome() . "item-->
+            <!--" . $semente->getNome() . "item-->
+" . $partes[2];
+        file_put_contents("../Base/navBar.php", $conteudo);
+        header('location: ../Tela/listagem'.$nomeMaiuscula.'.php');
+    }
 
 }
+
