@@ -14,12 +14,15 @@ if (realpath("./index.php")) {
 
 if (realpath("./Controle/conexao.php")) {
     include_once "./Controle/conexao.php";
+    include_once "./Controle/interfacesPDO.php";
 } else {
     if (realpath("../Controle/conexao.php")) {
         include_once "../Controle/conexao.php";
+        include_once "../Controle/interfacesPDO.php";
     } else {
         if (realpath("../../Controle/conexao.php")) {
             include_once "../../Controle/conexao.php";
+            include_once "../../Controle/interfacesPDO.php";
         }
     }
 }
@@ -154,73 +157,13 @@ class geradorPDO {
         $conteudo = $conteudo . "}";
 
         file_put_contents("../Modelo/" . ucfirst($semente->getNome()) . ".php", $conteudo);
+        $interfacePDO = new interfacesPDO();
         if (!realpath("../Base/navBar.php")) {
-            $conteudo = "<?php
-\$pontos = \"\";
-if (realpath(\"./index.php\")) {
-    \$pontos = './';
-} else {
-    if (realpath(\"../index.php\")) {
-        \$pontos = '../';
-    } else {
-        if (realpath(\"../../index.php\")) {
-            \$pontos = '../../';
-        }
-    }
-}
-?>
-
-<nav class=\"nav-extended white\">
-    <div class=\"nav-wrapper\" style=\"width: 100vw; margin-left: auto; margin-right: auto;\">
-        <a href=\"<?php echo \$pontos; ?>./Tela/home.php\" class=\"brand-logo left black-text\">Sloth</a>
-        <ul class=\"right hide-on-med-and-down\">";
-
-            $conteudo = $conteudo . "
-            <!--" . $semente->getNome() . "-->
-            <li>
-                <a class='dropdown-trigger center black-text' style=\"background-color: transparent\" data-hover=\"true\" href='#' data-target='" . $semente->getNome() . "'>" . ucfirst($semente->getNome()) . "</a>
-                <ul id='" . $semente->getNome() . "' class='dropdown-content'>
-                    <!--" . $semente->getNome() . "item-->
-                    <!--" . $semente->getNome() . "item-->
-                </ul>
-            </li>
-            <!--" . $semente->getNome() . "-->
-            <!--proximo-->
-            <!--proximo-->
-
-";
-            $conteudo = $conteudo . "
-        </ul>
-    </div>
-
-</nav>
-<script>
-$('.dropdown-trigger').dropdown({
-        coverTrigger: false,
-    });
-
-</script>
-";
-            file_put_contents("../Base/navBar.php", $conteudo);
+            $interfacePDO->criarNavBar();
+            $interfacePDO->adicionaObjetoNav($semente);
         } else {
-            $navantiga = file_get_contents("../Base/navBar.php");
-            $partes = explode('<!--proximo-->', $navantiga);
-            $conteudo = $partes[0] . "<!--" . $semente->getNome() . "-->
-            <li>
-                <a class='dropdown-trigger center black-text' style=\"background-color: transparent\" data-hover=\"true\" href='#' data-target='" . $semente->getNome() . "'>" . ucfirst($semente->getNome()) . "</a>
-                <ul id='" . $semente->getNome() . "' class='dropdown-content'>
-                    <!--" . $semente->getNome() . "item-->
-                    <!--" . $semente->getNome() . "item-->
-                </ul>
-            </li>
-            <!--" . $semente->getNome() . "-->
-            <!--proximo-->
-            <!--proximo-->
-            
-" . $partes[2];
-            file_put_contents("../Base/navBar.php", $conteudo);
+            $interfacePDO->adicionaObjetoNav($semente);
         }
-
         $this->gerarPDO($semente);
     }
 

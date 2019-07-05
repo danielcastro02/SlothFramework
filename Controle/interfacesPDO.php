@@ -116,6 +116,15 @@ class interfacesPDO {
                     <div class=\"row center\">
                         <a href=\"../index.php\" class=\"corPadrao3 btn\">Voltar</a>
                         <input type=\"submit\" class=\"btn corPadrao2\" value=\"Login\">
+                        <div class='row'>
+                            <?php
+                            if (isset(\$_GET['msg'])) {
+                                if (\$_GET['msg'] == \"erro\") {
+                                    echo \"LOGIN OU SENHA INCORRETOS!\";
+                                }
+                            }
+                            ?>
+                        </div>
                     </div>
                     
                 </form>
@@ -126,31 +135,11 @@ class interfacesPDO {
         ?>
     </body>
 </html>
-<?php
-if (isset(\$_GET['msg'])) {
-    if (\$_GET['msg'] == \"erro\") {
-        echo \"LOGIN OU SENHA INCORRETOS!\";
-    }
-}
-?>
+
 ";
         file_put_contents("../Tela/login.php", $conteudo);
-
-        $navbar = file_get_contents("../Base/navBar.php");
-        $filtro = explode("<!--" . $semente->getNome() . "login-->", $navbar);
-        if (count($filtro) > 1) {
-            $navbar = $filtro[0] . $filtro[2];
-        }
-        $partes = explode("<!--" . $semente->getNome() . "item-->", $navbar);
-        $conteudo = $partes[0] . "
-            <!--" . $semente->getNome() . "login-->
-                <li><a href=\"<?php echo \$pontos; ?>./Tela/login.php\">Login</a></li>
-            <!--" . $semente->getNome() . "login-->
-                
-            <!--" . $semente->getNome() . "item-->
-            <!--" . $semente->getNome() . "item-->
-" . $partes[2];
-        file_put_contents("../Base/navBar.php", $conteudo);
+        $interfacePDO = new interfacesPDO();
+        $interfacePDO->adicionaItemNav($semente, "login.php", "login");
         header('location: ../Tela/login.php');
     }
 
@@ -285,25 +274,12 @@ if (isset(\$_GET['msg'])) {
 ";
 
         file_put_contents("../Tela/registroUsuario.php", $conteudo);
-
-        $navbar = file_get_contents("../Base/navBar.php");
-        $filtro = explode("<!--" . $semente->getNome() . "registro-->", $navbar);
-        $navbar = $filtro[0] . $filtro[2];
-        $partes = explode("<!--" . $semente->getNome() . "item-->", $navbar);
-        $conteudo = $partes[0] . "
-            <!--" . $semente->getNome() . "registro-->
-                <li><a href=\"<?php echo \$pontos; ?>./Tela/registroUsuario.php\">Registro</a></li>
-            <!--" . $semente->getNome() . "registro-->
-                
-            <!--" . $semente->getNome() . "item-->
-            <!--" . $semente->getNome() . "item-->
-" . $partes[2];
-        file_put_contents("../Base/navBar.php", $conteudo);
+        $intefacePDO = new interfacesPDO();
+        $intefacePDO->adicionaItemNav($semente, 'registroUsuario.php', 'registro');
         header('location: ../Tela/registroUsuario.php');
     }
-    
-    
-    function criarListagem(){
+
+    function criarListagem() {
         $semente = new gerador();
         $semente->setNome($_POST['nome']);
         $bancoPDO = new bancoPDO();
@@ -315,10 +291,6 @@ if (isset(\$_GET['msg'])) {
             $atributos[] = $linha[0];
         }
         $semente->setAtributo($atributos);
-        if (!realpath("../Controle/$tabela" . "PDO.php")) {
-
-            $geradorPDO->geraModelo($semente);
-        }
         $conteudo = "<!DOCTYPE html>
 <html>
     <head>
@@ -326,9 +298,9 @@ if (isset(\$_GET['msg'])) {
         <title>Listagem $nomeMaiuscula</title>
         <?php
             include_once '../Base/header.php';
-            include_once '../Controle/".$nomeNormal."PDO.php';
-            include_once '../Modelo/".$nomeMaiuscula.".php';
-            \$".$nomeNormal."PDO = new ".$nomeNormal."PDO();
+            include_once '../Controle/" . $nomeNormal . "PDO.php';
+            include_once '../Modelo/" . $nomeMaiuscula . ".php';
+            \$" . $nomeNormal . "PDO = new " . $nomeNormal . "PDO();
         ?>
         <body class=\"homeimg\">
         <?php
@@ -340,29 +312,29 @@ if (isset(\$_GET['msg'])) {
                 <h4 class='center'>Listagem $nomeMaiuscula</h4>
                     <tr class=\"center\">
 ";
-        foreach($atributos as $att){
-            $conteudo = $conteudo."
-                        <td class='center'>".ucfirst($att)."</td>";
+        foreach ($atributos as $att) {
+            $conteudo = $conteudo . "
+                        <td class='center'>" . ucfirst($att) . "</td>";
         }
-        $conteudo = $conteudo."
+        $conteudo = $conteudo . "
                         <td class='center'>Editar</td>
                         <td class='center'>Excluir</td>
                     </tr>
                     <?php
-                    \$stmt = \$".$nomeNormal."PDO->select".$nomeMaiuscula."();
+                    \$stmt = \$" . $nomeNormal . "PDO->select" . $nomeMaiuscula . "();
                         
                     if (\$stmt) {
                         while (\$linha = \$stmt->fetch()) {
-                            \$".$nomeNormal." = new ".$nomeNormal."(\$linha);
+                            \$" . $nomeNormal . " = new " . $nomeNormal . "(\$linha);
                             ?>
                         <tr>";
-        foreach($atributos as $att){
-            $conteudo = $conteudo."
-                            <td class=\"center\"><?php echo \$".$nomeNormal."->get". ucfirst($att)."()?></td>";
+        foreach ($atributos as $att) {
+            $conteudo = $conteudo . "
+                            <td class=\"center\"><?php echo \$" . $nomeNormal . "->get" . ucfirst($att) . "()?></td>";
         }
-        $conteudo = $conteudo."
-                            <td class = 'center'><a href=\"./editar".$nomeMaiuscula.".php?id=<?php echo \$".$nomeNormal."->get".$atributos[0]."()?>\">Editar</a></td>
-                            <td class=\"center\"><a href=\"../Controle/".$nomeNormal."Controle.php?function=deletar&id=<?php echo \$".$nomeNormal."->get".$atributos[0]."()?>\">Excluir</a></td>
+        $conteudo = $conteudo . "
+                            <td class = 'center'><a href=\"./editar" . $nomeMaiuscula . ".php?id=<?php echo \$" . $nomeNormal . "->get" . $atributos[0] . "()?>\">Editar</a></td>
+                            <td class=\"center\"><a href=\"../Controle/" . $nomeNormal . "Controle.php?function=deletar&id=<?php echo \$" . $nomeNormal . "->get" . $atributos[0] . "()?>\">Excluir</a></td>
                         </tr>
                                 <?php
                         }
@@ -378,24 +350,11 @@ if (isset(\$_GET['msg'])) {
 </html>
 
 ";
-        file_put_contents("../Tela/listagem".$nomeMaiuscula.".php", $conteudo);
-        
-        $navbar = file_get_contents("../Base/navBar.php");
-        $teste = explode("<!--" . $semente->getNome() . "listar-->", $navbar);
-        if(strpos($navbar, "<!--" . $semente->getNome() . "listar-->")!==false){
-            $navbar = $teste[0].$teste[2];
-        }
-        $partes = explode("<!--".$semente->getNome()."item-->", $navbar);
-        $conteudo = $partes[0]."
-             <!--" . $semente->getNome() . "listar-->
-                <li><a href=\"<?php echo \$pontos; ?>./Tela/listagem".$nomeMaiuscula.".php\">Listar</a></li>
-            <!--" . $semente->getNome() . "listar-->
-                
-            <!--" . $semente->getNome() . "item-->
-            <!--" . $semente->getNome() . "item-->
-" . $partes[2];
-        file_put_contents("../Base/navBar.php", $conteudo);
-        header('location: ../Tela/listagem'.$nomeMaiuscula.'.php');
+        file_put_contents("../Tela/listagem" . $nomeMaiuscula . ".php", $conteudo);
+        $intefacePDO = new interfacesPDO();
+        $intefacePDO->adicionaItemNav($semente, "listagem" . $nomeMaiuscula . ".php", 'listagem');
+
+        header('location: ../Tela/listagem' . $nomeMaiuscula . '.php');
     }
 
     public function telaInsert() {
@@ -500,19 +459,8 @@ if (isset(\$_GET['msg'])) {
 
         file_put_contents("../Tela/registro$nome.php", $conteudo);
 
-        $navbar = file_get_contents("../Base/navBar.php");
-        $filtro = explode("<!--" . $semente->getNome() . "registro-->", $navbar);
-        $navbar = $filtro[0] . $filtro[2];
-        $partes = explode("<!--" . $semente->getNome() . "item-->", $navbar);
-        $conteudo = $partes[0] . "
-            <!--" . $semente->getNome() . "registro-->
-                <li><a href=\"<?php echo \$pontos; ?>./Tela/registro$nome.php\">Registro</a></li>
-            <!--" . $semente->getNome() . "registro-->
-                
-            <!--" . $semente->getNome() . "item-->
-            <!--" . $semente->getNome() . "item-->
-" . $partes[2];
-        file_put_contents("../Base/navBar.php", $conteudo);
+        $intefacePDO = new interfacesPDO();
+        $intefacePDO->adicionaItemNav($semente, "registro$nome.php", 'registro');
         header("location: ../Tela/registro$nome.php");
     }
 
@@ -534,6 +482,11 @@ if (isset(\$_GET['msg'])) {
             $geradorPDO->geraModelo($semente);
         }
         $pdoantiga = file_get_contents("../Controle/" . $tabela . "PDO.php");
+        if (preg_match("/*editar*/", $pdoantiga)) {
+            $pdoantiga = explode("/*editar*/", $pdoantiga);
+            $pdoantiga = $pdoantiga[0] . $pdoantiga[2];
+        }
+
         $pdoantigapartes = explode("/*chave*/", $pdoantiga);
         $conteudo = $pdoantigapartes[0] . "
             /*editar*/
@@ -567,7 +520,7 @@ if (isset(\$_GET['msg'])) {
         include_once '../Controle/" . $nomeNormal . "PDO.php';
         \$" . $nome . " = new " . $nomeNormal . "PDO();
             \$stmt = $" . $nome . "->select" . $nome . ucfirst($atributos[0]) . "(\$_GET['id']);
-                \$nomeNormal = new " . $nome ."(\$stmt->fetch());
+                \$nomeNormal = new " . $nome . "(\$stmt->fetch());
         ?>
         <main>
             <div class=\"row\" style=\"margin-top: 10vh;\">
@@ -578,13 +531,13 @@ if (isset(\$_GET['msg'])) {
             if ($i == 0) {
                 $conteudo = $conteudo . "
                         <div class=\"input-field col s6\" hidden>
-                            <input type=\"text\" name=\"$atributos[$i]\" value=\"<?= \$nomeNormal->get". ucfirst($atributos[$i])."() ?>\">
+                            <input type=\"text\" name=\"$atributos[$i]\" value=\"<?= \$nomeNormal->get" . ucfirst($atributos[$i]) . "() ?>\">
                             <label>" . $atributos[$i] . "</label>
                         </div>";
             } else {
-            $conteudo = $conteudo . "
+                $conteudo = $conteudo . "
                         <div class=\"input-field col s6\">
-                            <input type=\"text\" name=\"$atributos[$i]\" value=\"<?= \$nomeNormal->get". ucfirst($atributos[$i])."() ?>\">
+                            <input type=\"text\" name=\"$atributos[$i]\" value=\"<?= \$nomeNormal->get" . ucfirst($atributos[$i]) . "() ?>\">
                             <label>" . $atributos[$i] . "</label>
                         </div>";
             }
@@ -607,7 +560,80 @@ if (isset(\$_GET['msg'])) {
 ";
 
         file_put_contents("../Tela/editar$nome.php", $conteudo);
+        header("Location: ./interfacesControle.php?function=criarListagem", TRUE, 307);
+    }
+
+    function criarNavBar() {
+        $conteudo = "<?php
+\$pontos = \"\";
+if (realpath(\"./index.php\")) {
+    \$pontos = './';
+} else {
+    if (realpath(\"../index.php\")) {
+        \$pontos = '../';
+    } else {
+        if (realpath(\"../../index.php\")) {
+            \$pontos = '../../';
+        }
+    }
+}
+?>
+
+<nav class=\"nav-extended white\">
+    <div class=\"nav-wrapper\" style=\"width: 100vw; margin-left: auto; margin-right: auto;\">
+        <a href=\"<?php echo \$pontos; ?>./Tela/home.php\" class=\"brand-logo left black-text\">Sloth</a>
+        <ul class=\"right hide-on-med-and-down\">
+            <!--proximo-->
+        </ul>
+    </div>
+</nav>
+<script>
+$('.dropdown-trigger').dropdown({
+        coverTrigger: false,
+    });
+</script>
+";
+        file_put_contents("../Base/navBar.php", $conteudo);
+    }
+
+    function adicionaObjetoNav(gerador $semente) {
+        if (!realpath("../Base/navBar.php")) {
+            $this->criarNavBar();
+        }
+        $nav = file_get_contents("../Base/navBar.php");
+        if (!preg_match("<!--" . $semente->getNome() . "-->", $nav)) {
+
+            $nav = explode("<!--proximo-->", $nav);
+
+            $conteudo = $nav[0] . "
+            <!--" . $semente->getNome() . "-->
+            <li>
+                <a class='dropdown-trigger center black-text' style=\"background-color: transparent\" data-hover=\"true\" href='#' data-target='" . $semente->getNome() . "'>" . ucfirst($semente->getNome()) . "</a>
+                <ul id='" . $semente->getNome() . "' class='dropdown-content'>
+                    <!--" . $semente->getNome() . "item-->
+                </ul>
+            </li>
+            <!--" . $semente->getNome() . "-->
+            <!--proximo-->
+
+" . $nav[1];
+            file_put_contents("../Base/navBar.php", $conteudo);
+        }
+    }
+
+    function adicionaItemNav(gerador $semente, string $nomearquivo, string $funcao) {
+        $nav = file_get_contents("../Base/navBar.php");
+        if (preg_match("<!--" . $semente->getNome() . "$funcao-->", $nav)) {
+            $nav = explode("<!--" . $semente->getNome() . "$funcao-->", $nav);
+            $nav = $nav[0] . $nav[2];
+        }
+        $nav = explode("<!--" . $semente->getNome() . "item-->", $nav);
+        $conteudo = $nav[0] . "<!--" . $semente->getNome() . $funcao . "-->
+                    <li><a href=\"<?php echo \$pontos; ?>./Tela/$nomearquivo\">$funcao</a></li>
+                    <!--" . $semente->getNome() . "$funcao-->
+                    <!--" . $semente->getNome() . "item-->
+                " . $nav[1];
+        file_put_contents("../Base/navBar.php", $conteudo);
     }
 
 }
-
