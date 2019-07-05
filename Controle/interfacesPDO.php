@@ -621,7 +621,7 @@ $('.dropdown-trigger').dropdown({
         }
     }
 
-    function adicionaItemNav(gerador $semente, string $nomearquivo, string $funcao) {
+    function adicionaItemNav(gerador $semente, $nomearquivo, $funcao) {
         $nav = file_get_contents("../Base/navBar.php");
         if (preg_match("<!--" . $semente->getNome() . "$funcao-->", $nav)) {
             $nav = explode("<!--" . $semente->getNome() . "$funcao-->", $nav);

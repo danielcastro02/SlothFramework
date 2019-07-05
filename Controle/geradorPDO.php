@@ -313,7 +313,7 @@ class " . $nome . "PDO{
     public function delete" . $nome . "(\$definir){
         \$con = new conexao();
         \$pdo = \$con->getConexao();
-        \$stmt = \$pdo->prepare('delete from " . $nomeNormal . " where definir = :definir ;');
+        \$stmt = \$pdo->prepare('delete from " . $nomeNormal . " where ".$atributos[0]." = :definir ;');
         \$stmt->bindValue(':definir', \$definir);
         \$stmt->execute();
         return \$stmt->rowCount();
