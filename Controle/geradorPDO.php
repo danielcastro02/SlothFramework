@@ -195,7 +195,7 @@ class " . $nome . "PDO{
         \$" . $nomeNormal . " = new " . $nomeNormal . "(\$_POST);
         \$con = new conexao();
         \$pdo = \$con->getConexao();
-        \$stmt = \$pdo->prepare('insert into " . $nome . " values(";
+        \$stmt = \$pdo->prepare('insert into " . $nomeNormal . " values(";
 
         $buscaRegra = explode(" ", $semente->getRegra()[0]);
         $verificaDefault = false;
