@@ -1,8 +1,5 @@
 <?php
 session_start();
-if (isset($_SESSION['logado'])) {
-    header('location: ./Tela/home.php');
-}
 ?>
 <!DOCTYPE html>
 <html>

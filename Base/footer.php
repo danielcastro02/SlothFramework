@@ -11,6 +11,7 @@ if (realpath("./index.php")) {
         }
     }
 }
+include_once __DIR__."/toast.php";
 ?>
 
 <footer class="center black">

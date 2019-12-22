@@ -22,12 +22,11 @@ class AplicativoPDO {
         $aplicativo = new aplicativo($_POST);
         $con = new conexao();
         $pdo = $con->getConexao();
-        $stmt = $pdo->prepare('insert into Aplicativo values(default , :cliente , :nome_pacote , :chave , :dominio , :arquivo_firebase);');
+        $stmt = $pdo->prepare('insert into aplicativo values(default , :cliente , :nome_pacote , :chave , :dominio , :arquivo_firebase);');
 
         $stmt->bindValue(':cliente', $aplicativo->getCliente());
 
         $stmt->bindValue(':nome_pacote', $aplicativo->getNome_pacote());
-        mkdir("../Img/Chaves");
         mkdir("../Img/Chaves/".$aplicativo->getCliente());
         $stmt->bindValue(':chave', "Img/Chaves/" . $aplicativo->getCliente() . "/" . $_FILES['chave']['name']);
         move_uploaded_file($_FILES['chave']['tmp_name'], "../Img/Chaves/" . $aplicativo->getCliente() . "/" . $_FILES['chave']['name']);
@@ -35,16 +34,10 @@ class AplicativoPDO {
         $stmt->bindValue(':dominio', $aplicativo->getDominio());
 
         $stmt->bindValue(':arquivo_firebase', "Img/Chaves/" . $aplicativo->getCliente() . "/" . $_FILES['arquivo_firebase']['name']);
-        $ext = explode('.', $_FILES['chave']['name']);
-        $extensao2 = "." . $ext[1];
-        $nome_imagem = hash_file('md5', $_FILES['chave']['tmp_name']);
-        $ext2 = explode('.', $_FILES['arquivo_firebase']['name']);
-        $extensao2 = "." . $ext[1];
-        $nome_imagem = hash_file('md5', $_FILES['arquivo_firebase']['tmp_name']);
         if ($stmt->execute()) {
-            header('location: ../index.php?msg=aplicativoInserido');
+            header('location: ../Tela/home.php?msg=aplicativoInserido');
         } else {
-            header('location: ../index.php?msg=aplicativoErroInsert');
+            header('location: ../Tela/home.php?msg=aplicativoErroInsert');
         }
     }
 
