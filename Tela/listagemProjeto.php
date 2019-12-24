@@ -23,12 +23,12 @@ include_once '../Modelo/Projeto.php';
     <div class="row">
         <div class="col s12 l10 offset-l1">
             <table>
-                <th>
-                <td>Nome</td>
-                <td>Descrição</td>
-                <td>Detalhes</td>
-                <td>Editar</td>
-                </th>
+                <tr>
+                <th>Nome</th>
+                <th>Descrição</th>
+                <th>Detalhes</th>
+                <th>Editar</th>
+                </tr>
                 <?php
                 $projetoPDO = new ProjetoPDO();
                 $stmt = $projetoPDO->selectAll();
@@ -39,7 +39,7 @@ include_once '../Modelo/Projeto.php';
                         <tr>
                             <td><?php echo $projeto->getNomeProjeto() ?></td>
                             <td><?php echo $projeto->getDescricaoProjeto() ?></td>
-                            <td><a class="btn corPadrao2" href="./detalhesProjeto.php?id_projeto=<?php echo $projeto->getIdProjeto() ?>">Detalhes</a></td>
+                            <td><a class="btn corPadrao2" href="./detalheProjeto.php?id_projeto=<?php echo $projeto->getIdProjeto() ?>">Detalhes</a></td>
                             <td><a class="btn corPadrao2" href="./editarProjeto.php?id_projeto=<?php echo $projeto->getIdProjeto() ?>">Editar</a></td>
                         </tr>
                         <?php

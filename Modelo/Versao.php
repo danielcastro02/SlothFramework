@@ -89,4 +89,16 @@ class Versao
         $this->zip_file = $zip_file;
     }
 
+    public function getTextNivel(){
+        if($this->nivel==VersaoPDO::FIX_VERSION){
+            return "Fix";
+        }
+        if($this->nivel==VersaoPDO::PROD_VERSION){
+            return "Produção";
+        }
+        if($this->nivel==VersaoPDO::TEST_VERSION){
+            return "Teste";
+        }
+    }
+
 }

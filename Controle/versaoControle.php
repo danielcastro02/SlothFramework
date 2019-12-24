@@ -4,12 +4,11 @@ if (!isset($_SESSION)) {
     session_start();
 }
 
-include_once __DIR__ . '/projetoPDO.php';
+include_once __DIR__ . '/versaoPDO.php';
 
-$classe = new ProjetoPDO();
+$classe = new aplicativoPDO();
 
 if (isset($_GET['function'])) {
     $metodo = $_GET['function'];
     $classe->$metodo();
 }
-
