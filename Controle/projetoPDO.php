@@ -15,6 +15,7 @@ class ProjetoPDO extends PDOBase
         $stmt->bindValue(":nome_projeto", $projeto->getNomeProjeto());
         $stmt->bindValue(":descricao", $projeto->getDescricaoProjeto());
         $stmt->execute();
+        $this->addToast("Inserido!");
         header('location: ../Tela/listagemProjeto.php');
     }
 
@@ -31,7 +32,7 @@ class ProjetoPDO extends PDOBase
         $stmt = $pdo->prepare("select * from projeto where id_projeto = :id");
         $stmt->bindValue(":id", $id);
         $stmt->execute();
-        return new Projeto($stmt->fetch());
+        return $stmt;
     }
 
     function editar(){
@@ -42,7 +43,23 @@ class ProjetoPDO extends PDOBase
         $stmt->bindValue(":descricao", $projeto->getDescricaoProjeto());
         $stmt->bindValue(":id_projeto", $projeto->getIdProjeto());
         $stmt->execute();
+        $this->addToast("Editado!");
+
         header('location: ../Tela/listagemProjeto.php');
+    }
+
+    function excluir(){
+        $this->requerLogin();
+        $pdo = conexao::getConexao();
+        $stmt = $pdo->prepare("delete from projeto where id_projeto = :id_projeto;");
+        $stmt->bindValue(':id_projeto' , $_GET['id_projeto']);
+        $stmt->execute();
+        if($stmt->rowCount()==0){
+            $this->addToast("Não é possível excluir, existem versões associadas a este projeto!");
+        }else{
+            $this->addToast("Exluido!");
+        }
+        header("location: ../Tela/listagemProjeto.php");
     }
 
 }

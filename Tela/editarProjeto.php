@@ -16,6 +16,7 @@ include_once '../Controle/projetoPDO.php';
 include_once '../Modelo/Projeto.php';
 $projetoPDO = new ProjetoPDO();
 $projeto = $projetoPDO->selectId_projeto($_GET['id_projeto']);
+$projeto = new Projeto($projeto->fetch());
 ?>
 <main>
     <div class="row" style="margin-top: 10vh;">
@@ -28,7 +29,7 @@ $projeto = $projetoPDO->selectId_projeto($_GET['id_projeto']);
                     <label for="nome_projeto">Nome do projeto</label>
                 </div>
                 <div class="input-field col s6">
-                    <textarea type="text" name="descricao_projeto" id="descricao_projeto" class="materialize-textarea"  value="<?php echo $projeto->getDescricaoProjeto() ?>"></textarea>
+                    <textarea type="text" name="descricao_projeto" id="descricao_projeto" class="materialize-textarea"><?php echo $projeto->getDescricaoProjeto() ?></textarea>
                     <label for="descricao_projeto">Descrição</label>
                 </div>
                 <div class="row center">

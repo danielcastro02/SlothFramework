@@ -6,7 +6,7 @@ if (!isset($_SESSION)) {
 
 include_once __DIR__ . '/versaoPDO.php';
 
-$classe = new aplicativoPDO();
+$classe = new VersaoPDO();
 
 if (isset($_GET['function'])) {
     $metodo = $_GET['function'];
