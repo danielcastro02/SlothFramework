@@ -2,9 +2,7 @@
 include_once '../Base/requerLogin.php';
 include_once '../Controle/clientePDO.php';
 include_once '../Controle/projetoPDO.php';
-include_once '../Controle/sitePDO.php';
 include_once '../Modelo/Cliente.php';
-include_once '../Modelo/Site.php';
 include_once '../Modelo/Projeto.php';
 ?>
 <!DOCTYPE html>
@@ -21,10 +19,10 @@ include_once '../Base/navBar.php';
 ?>
 <main>
     <div class="row" style="margin-top: 10vh;">
-        <form action="../Controle/aplicativoControle.php?function=inserirAplicativo" enctype="multipart/form-data"
+        <form action="../Controle/siteControle.php?function=inserirSite" enctype="multipart/form-data"
               class="card col l8 offset-l2 m10 offset-m1 s10 offset-s1" method="post">
             <div class="row center">
-                <h4 class="textoCorPadrao2">Cadastrar Aplicativo</h4>
+                <h4 class="textoCorPadrao2">Cadastrar site</h4>
                 <div class="input-field col s6">
                     <?php
                     $clientePDO = new ClientePDO();
@@ -32,14 +30,12 @@ include_once '../Base/navBar.php';
                     ?>
                     <select id="id_cliente" name="id_cliente">
                         <?php
-                            if($stmtCliente){
-                                while($linha = $stmtCliente->fetch()) {
-                                    $cliente = new Cliente($linha);
-                                    echo "<option value='".$cliente->getIdCliente()."'>".$cliente->getNomeCliente()."</option>";
-                                }
-                            }else{
-                                echo "<option value='0'>Nenhum Cliente</option>";
+                        if($stmtCliente){
+                            while($linha = $stmtCliente->fetch()) {
+                                $cliente = new Cliente($linha);
+                                echo "<option value='".$cliente->getIdCliente()."'>".$cliente->getNomeCliente()."</option>";
                             }
+                        }
 
                         ?>
                     </select>
@@ -52,6 +48,7 @@ include_once '../Base/navBar.php';
                     ?>
                     <select id="id_projeto" name="id_projeto">
                         <option value="0" selected disabled>Selecione</option>
+
                         <?php
                         if($stmtProjeto){
                             while($linha = $stmtProjeto->fetch()) {
@@ -73,42 +70,8 @@ include_once '../Base/navBar.php';
                     <label for="id_versao">Versão</label>
                 </div>
                 <div class="input-field col s6">
-                    <?php
-                    $sitePDO = new SitePDO();
-                    $stmtSite = $sitePDO->selectSite();
-                    ?>
-                    <select id="id_site" name="id_site">
-                        <option value="0" selected disabled>Selecione</option>
-                        <?php
-                        if($stmtSite){
-                            while($linha = $stmtSite->fetch()) {
-                                $site = new Site($linha);
-                                echo "<option value='".$site->getIdSite()."'>".$site->getDominio()."</option>";
-                            }
-                        }else{
-                            echo "<option value='0'>Nenhum Site</option>";
-                        }
-                        ?>
-                    </select>
-
-                    <label for="id_site">Site</label>
-                </div>
-                <div class="input-field col s6">
-                    <input type="text" name="nome_pacote" id="nome_pacote">
-                    <label for="nome_pacote">Nome do Pacote</label>
-                </div>
-
-                <div class="input-field col s6">
-                    <input type="text" name="dominio">
-                    <label>Domínio</label>
-                </div>
-                <div class="input-field col s6">
-                    Chave
-                    <input type="file" name="chave">
-                </div>
-                <div class="input-field col s6">
-                    Fire Base
-                    <input type="file" name="arquivo_firebase">
+                    <input type="text" name="dominio" id="dominio">
+                    <label for="dominio">Dominio (sem https:// ou qualquer /)</label>
                 </div>
                 <div class="row center">
                     <a href="../index.php" class="corPadrao3 btn">Voltar</a>

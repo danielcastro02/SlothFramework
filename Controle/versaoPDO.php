@@ -1,6 +1,7 @@
 <?php
 
 include_once __DIR__ . "/conexao.php";
+include_once __DIR__ . "/PDOBase.php";
 include_once __DIR__ . "/../Modelo/Versao.php";
 
 class VersaoPDO extends PDOBase

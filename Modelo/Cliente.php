@@ -27,6 +27,27 @@ class Cliente
         }
     }
 
+    public function getNomeCliente()
+    {
+        return $this->nome_cliente;
+    }
+
+    public function setNomeCliente($nome_cliente)
+    {
+        $this->nome_cliente = $nome_cliente;
+    }
+
+    public function getDescricaoCliente()
+    {
+        return $this->descricao_cliente;
+    }
+
+    public function setDescricaoCliente($descricao_cliente)
+    {
+        $this->descricao_cliente = $descricao_cliente;
+    }
+
+
     public function getIdCliente()
     {
         return $this->id_cliente;
