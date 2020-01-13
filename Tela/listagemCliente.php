@@ -21,7 +21,7 @@ include_once '../Modelo/Cliente.php';
         <h5>Cliente</h5>
     </div>
     <div class="row">
-        <div class="col s12 l10 offset-l1">
+        <div class="col s12 l10 offset-l1 card">
             <table>
                 <tr>
                     <th>Nome</th>
@@ -29,6 +29,7 @@ include_once '../Modelo/Cliente.php';
                     <th>CPF/CNPJ</th>
                     <th>Detalhes</th>
                     <th>Editar</th>
+                    <th>Excluir</th>
                 </tr>
                 <?php
                 $clientePDO = new ClientePDO();
@@ -41,8 +42,9 @@ include_once '../Modelo/Cliente.php';
                             <td><?php echo $cliente->getNomeCliente() ?></td>
                             <td><?php echo $cliente->getDescricaoCliente() ?></td>
                             <td><?php echo $cliente->getCpfCnpj() ?></td>
-                            <td><a class="btn corPadrao2" href="./detalheCliente.php?id_projeto=<?php echo $cliente->getIdCliente() ?>">Detalhes</a></td>
-                            <td><a class="btn corPadrao2" href="./editarCliente.php?id_projeto=<?php echo $cliente->getIdCliente() ?>">Editar</a></td>
+                            <td><a class="btn corPadrao2" href="./detalhesCliente.php?id_cliente=<?php echo $cliente->getIdCliente() ?>">Detalhes</a></td>
+                            <td><a class="btn corPadrao2" href="./editarCliente.php?id_cliente=<?php echo $cliente->getIdCliente() ?>">Editar</a></td>
+                            <td><a class="btn red darken-2" href="../Controle/clienteControle.php?function=excluir&id_cliente=<?php echo $cliente->getIdCliente() ?>">Excluir</a></td>
                         </tr>
                         <?php
                     }

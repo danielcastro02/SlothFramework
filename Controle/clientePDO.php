@@ -38,4 +38,31 @@ class ClientePDO extends PDOBase
         $stmt->execute();
         return $stmt;
     }
+
+    function excluir()
+    {
+        $id_cliente = $_GET['id_cliente'];
+        $pdo = conexao::getConexao();
+        $stmt = $pdo->prepare("delete from cliente where id_cliente = :id_cliente");
+        $stmt->bindValue(":id_cliente", $id_cliente);
+        if($stmt->execute()) {
+            $_SESSION['toast'][] = "Cliente excluido";
+            header("location: ../Tela/listagemCliente.php");
+        }
+    }
+
+    function editar()
+    {
+        $cliente = new Cliente($_POST);
+        $pdo = conexao::getConexao();
+        $stmt = $pdo->prepare("update cliente set nome_cliente = :nome_cliente, cpf_cnpj = :cpf_cnpj, descricao_cliente = :descricao_cliente where id_cliente = :id_cliente");
+        $stmt->bindValue(":nome_cliente", $cliente->getNomeCliente());
+        $stmt->bindValue(":cpf_cnpj", $cliente->getCpfCnpj());
+        $stmt->bindValue(":descricao_cliente", $cliente->getDescricaoCliente());
+        $stmt->bindValue(":id_cliente", $cliente->getIdCliente());
+        if($stmt->execute()) {
+            $_SESSION['toast'][] = "Cliente Alterado";
+            header("location: ../Tela/listagemCliente.php");
+        }
+    }
 }

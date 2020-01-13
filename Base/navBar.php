@@ -51,6 +51,22 @@ if (realpath("./index.php")) {
                 </ul>
             </li>
             <!--usuario-->
+
+            <!--cliente-->
+            <li>
+                <a class='dropdown-trigger center black-text' style="background-color: transparent" data-hover="true" href='#' data-target='cliente'>Cliente</a>
+                <ul id='cliente' class='dropdown-content'>
+                    <!--clientegistro-->
+                    <li><a href="<?php echo $pontos; ?>./Tela/registroCliente.php">registro</a></li>
+                    <!--clienteregistro-->
+                    <!--clientelistagem-->
+                    <li><a href="<?php echo $pontos; ?>./Tela/listagemCliente.php">listagem</a></li>
+                    <!--clientelistagem-->
+                    <!--aclienteitem-->
+
+                </ul>
+            </li>
+            <!--cliente-->
             <!--proximo-->
 
 
