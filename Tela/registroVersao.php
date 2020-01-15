@@ -65,6 +65,15 @@ include_once '../Base/navBar.php';
                         <input class="file-path validate" type="text">
                     </div>
                 </div>
+                <div class="file-field col s12 input-field">
+                    <div class="btn">
+                        <span>File</span>
+                        <input type="file" name="sql">
+                    </div>
+                    <div class="file-path-wrapper">
+                        <input class="file-path validate" type="text">
+                    </div>
+                </div>
                 <div class="row center">
                     <a href="../index.php" class="corPadrao3 btn">Voltar</a>
                     <input type="submit" class="btn corPadrao2" value="Cadastrar">

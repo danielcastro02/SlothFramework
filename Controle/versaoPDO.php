@@ -15,17 +15,23 @@ class VersaoPDO extends PDOBase
     {
         $versao = new Versao($_POST);
         $pdo = conexao::getConexao();
-        $stmt = $pdo->prepare("insert into versao values (default, :id_projeto , :nome_versao , :descricao_versao , :nivel , :zip_file);");
+        $stmt = $pdo->prepare("insert into versao values (default, :id_projeto , :nome_versao , :descricao_versao , :nivel , :zip_file , :update_sql);");
         $stmt->bindValue(":id_projeto", $versao->getIdProjeto());
         $stmt->bindValue(":nome_versao", $versao->getNomeVersao());
         $stmt->bindValue(":descricao_versao", $versao->getDescricaoVersao());
         $stmt->bindValue(":nivel", $versao->getNivel());
         $nome = hash_file('md5', $_FILES['arquivo']['tmp_name']);
+        $nomesql = hash_file('md5', $_FILES['sql']['tmp_name']);
         $ext = explode('.', $_FILES['arquivo']['name']);
+        $extsql = explode('.', $_FILES['sql']['name']);
         $extensao = "." . $ext[(count($ext) - 1)];
+        $extensaosql = "." . $extsql[(count($extsql) - 1)];
         $extensao = strtolower($extensao);
+        $extensaosql = strtolower($extensaosql);
         move_uploaded_file($_FILES['arquivo']["tmp_name"], '..' . self::REPO_PATH . $nome . $extensao);
+        move_uploaded_file($_FILES['sql']["tmp_name"], '..' . self::REPO_PATH . $nomesql . $extensaosql);
         $stmt->bindValue(':zip_file', $nome . $extensao);
+        $stmt->bindValue(':update_sql', $nomesql . $extensaosql);
         $stmt->execute();
         header("location: ../Tela/detalheProjeto.php?id_projeto=" . $versao->getIdProjeto());
     }
