@@ -19,15 +19,15 @@ class AplicativoPDO {
     /* inserir */
 
     function inserirAplicativo() {
-        $aplicativo = new aplicativo($_POST);
+        $aplicativo = new Aplicativo($_POST);
         $con = new conexao();
         $pdo = $con->getConexao();
         $stmt = $pdo->prepare('insert into aplicativo values(default , :cliente , :nome_pacote , :chave , :dominio , :arquivo_firebase);');
 
-        $stmt->bindValue(':cliente', $aplicativo->getCliente());
+        $stmt->bindValue(':cliente', $aplicativo->getIdCliente());
 
-        $stmt->bindValue(':nome_pacote', $aplicativo->getNome_pacote());
-        mkdir("../Img/Chaves/".$aplicativo->getCliente());
+        $stmt->bindValue(':nome_pacote', $aplicativo->getNomePacote());
+        mkdir("../Img/Chaves/".$aplicativo->getIdCliente());
         $stmt->bindValue(':chave', "Img/Chaves/" . $aplicativo->getCliente() . "/" . $_FILES['chave']['name']);
         move_uploaded_file($_FILES['chave']['tmp_name'], "../Img/Chaves/" . $aplicativo->getCliente() . "/" . $_FILES['chave']['name']);
         move_uploaded_file($_FILES['arquivo_firebase']['tmp_name'], "../Img/Chaves/" . $aplicativo->getCliente() . "/" . $_FILES['arquivo_firebase']['name']);
@@ -74,7 +74,7 @@ class AplicativoPDO {
 
         $con = new conexao();
         $pdo = $con->getConexao();
-        $stmt = $pdo->prepare('select * from aplicativo where cliente = :cliente;');
+        $stmt = $pdo->prepare('select * from aplicativo where id_cliente = :cliente;');
         $stmt->bindValue(':cliente', $cliente);
         $stmt->execute();
         if ($stmt->rowCount() > 0) {

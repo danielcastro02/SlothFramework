@@ -1,6 +1,6 @@
 <?php
 
-class aplicativo
+class Aplicativo
 {
 
     private $id_aplicativo;
