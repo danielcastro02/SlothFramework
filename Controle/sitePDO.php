@@ -29,4 +29,17 @@ class SitePDO extends PDOBase
             return false;
         }
     }
+
+    function selectSiteIdSite($id_site){
+        $pdo = conexao::getConexao();
+        $stmt = $pdo->prepare("select * from site where id_site = :id_site");
+        $stmt->bindValue(":id_site" , $id_site);
+        $stmt->execute();
+        if($stmt->rowCount()>0){
+            return $stmt;
+        }else{
+            return false;
+        }
+    }
+
 }
