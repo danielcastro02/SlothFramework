@@ -98,3 +98,22 @@ main {
     font-weight: bold;
     cursor: default;
 }
+
+.horizontal-divider {
+    background-image: linear-gradient(to right, transparent, black, transparent);
+    height: 1px;
+}
+
+.right-divider {
+    border-style: solid;
+    border-width: 1px;
+    border-image: linear-gradient(to top, rgba(0, 0, 0, 0), gray, rgba(0, 0, 0, 0)) 1 100%;
+    border-left: none;
+}
+
+.left-divider {
+    border-style: solid;
+    border-width: 1px;
+    border-image: linear-gradient(to top, rgba(0, 0, 0, 0), gray, rgba(0, 0, 0, 0)) 1 100%;
+    border-right: none;
+}
