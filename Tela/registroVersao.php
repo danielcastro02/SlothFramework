@@ -50,6 +50,12 @@ include_once '../Base/navBar.php';
                     </select>
                     <label for="nivel">Nível da versão</label>
                 </div>
+                <div class="input-field col s4">
+                    <select name="id_anterior" id="id_anterior">
+
+                    </select>
+                    <label for="id_anterior">Versão anterior</label>
+                </div>
                 <div class="input-field col s12">
                     <textarea type="text" name="descricao_versao" id="descricao_versao"
                               class="materialize-textarea"></textarea>
@@ -58,7 +64,7 @@ include_once '../Base/navBar.php';
 
                 <div class="file-field col s12 input-field">
                     <div class="btn">
-                        <span>File</span>
+                        <span>Zip da versão</span>
                         <input type="file" name="arquivo">
                     </div>
                     <div class="file-path-wrapper">
@@ -67,8 +73,17 @@ include_once '../Base/navBar.php';
                 </div>
                 <div class="file-field col s12 input-field">
                     <div class="btn">
-                        <span>File</span>
+                        <span>Update SQL</span>
                         <input type="file" name="sql">
+                    </div>
+                    <div class="file-path-wrapper">
+                        <input class="file-path validate" type="text">
+                    </div>
+                </div>
+                <div class="file-field col s12 input-field">
+                    <div class="btn">
+                        <span>Full SQL</span>
+                        <input type="file" name="full_sql">
                     </div>
                     <div class="file-path-wrapper">
                         <input class="file-path validate" type="text">
@@ -82,6 +97,12 @@ include_once '../Base/navBar.php';
         </form>
     </div>
     <script>
+        $("#id_projeto").change(function () {
+            $("#id_anterior").load("../Tela/loadVersaoAnterior.php?id_projeto=" + $("#id_projeto").val(), function () {
+                $('select').formSelect();
+            });
+        });
+
         $("select").formSelect();
     </script>
 </main>

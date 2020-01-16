@@ -5,10 +5,13 @@ class Versao
 {
     private $id_versao;
     private $id_projeto;
+    private $id_anterior;
     private $nome_versao;
     private $descricao_versao;
     private $nivel;
     private $zip_file;
+    private $update_sql;
+    private $full_sql;
 
     public function __construct() {
         if (func_num_args() != 0) {
@@ -27,6 +30,36 @@ class Versao
                 $this->$atributo = $valor;
             }
         }
+    }
+
+    public function getFullSql()
+    {
+        return $this->full_sql;
+    }
+
+    public function setFullSql($full_sql)
+    {
+        $this->full_sql = $full_sql;
+    }
+
+    public function getIdAnterior()
+    {
+        return $this->id_anterior;
+    }
+
+    public function setIdAnterior($id_anterior)
+    {
+        $this->id_anterior = $id_anterior;
+    }
+
+    public function getUpdateSql()
+    {
+        return $this->update_sql;
+    }
+
+    public function setUpdateSql($update_sql)
+    {
+        $this->update_sql = $update_sql;
     }
 
     public function getIdVersao()

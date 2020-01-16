@@ -51,7 +51,7 @@ $projeto = new Projeto($stmt->fetch());
                                         <td><?php echo $versao->getDescricaoVersao(); ?></td>
                                         <td><?php echo $versao->getTextNivel(); ?></td>
                                         <td><a href="<?php echo '..'.VersaoPDO::REPO_PATH.$versao->getZipFile(); ?>" download>Download</a></td>
-                                        <td><a href="<?php echo './editarVersao.php?id_versao='.$versao->getIdProjeto(); ?>">Editar</a></td>
+                                        <td><a href="<?php echo './editarVersao.php?id_versao='.$versao->getIdVersao(); ?>">Editar</a></td>
                                     </tr><?php
                                 }
                             }
