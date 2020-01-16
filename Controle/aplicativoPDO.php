@@ -24,7 +24,6 @@ class AplicativoPDO {
 
     function inserirAplicativo() {
         $aplicativo = new Aplicativo($_POST);
-        print_r($aplicativo);
         $con = new conexao();
         $pdo = $con->getConexao();
         $stmt = $pdo->prepare('insert into aplicativo values(default , :cliente, :id_versao, :id_site, :nome_pacote , :chave , :arquivo_firebase);');
@@ -41,7 +40,6 @@ class AplicativoPDO {
         move_uploaded_file($_FILES['chave']["tmp_name"], '..' . self::REPO_KEYS . $nome . $extensao);
         $stmt->bindValue(':chave', $nome . $extensao);
 
-
         $nome = hash_file('md5', $_FILES['arquivo_firebase']['tmp_name']);
         $ext = explode('.', $_FILES['arquivo_firebase']['name']);
         $extensao = "." . $ext[(count($ext) - 1)];
@@ -50,10 +48,10 @@ class AplicativoPDO {
         $stmt->bindValue(':arquivo_firebase', $nome . $extensao);
 
         $stmt->execute();
-//            header('location: ../Tela/home.php?msg=aplicativoInserido');
-//        } else {
-//            header('location: ../Tela/home.php?msg=aplicativoErroInsert');
-//        }
+            header('location: ../Tela/home.php?msg=aplicativoInserido');
+        } else {
+            header('location: ../Tela/home.php?msg=aplicativoErroInsert');
+        }
     }
 
     /* inserir */
@@ -89,7 +87,7 @@ class AplicativoPDO {
 
         $con = new conexao();
         $pdo = $con->getConexao();
-        $stmt = $pdo->prepare('select * from aplicativo where cliente = :cliente;');
+        $stmt = $pdo->prepare('select * from aplicativo where id_cliente = :cliente;');
         $stmt->bindValue(':cliente', $cliente);
         $stmt->execute();
         if ($stmt->rowCount() > 0) {
