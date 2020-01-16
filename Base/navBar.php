@@ -17,61 +17,46 @@ if (realpath("./index.php")) {
     <div class="nav-wrapper" style="width: 100vw; margin-left: auto; margin-right: auto;">
         <a href="<?php echo $pontos; ?>./Tela/home.php" class="brand-logo left black-text">Sloth</a>
         <ul class="right hide-on-med-and-down">
-            
-            <!--aplicativo-->
             <li>
-                <a class='dropdown-trigger center black-text' style="background-color: transparent" data-hover="true" href='#' data-target='aplicativo'>Aplicativo</a>
+                <a class='dropdown-trigger center black-text' style="background-color: transparent" data-hover="true" href='#' data-target='adm'>Administração</a>
+                <ul id='adm' class='dropdown-content'>
+                    <li><a href="<?php echo $pontos; ?>./Tela/registroUsuario.php">Cadastrar Usuário</a></li>
+                </ul>
+            </li>
+            <li>
+                <a class='dropdown-trigger center black-text' style="background-color: transparent" data-hover="true" href='#' data-target='projetos'>Projetos</a>
+                <ul id='projetos' class='dropdown-content'>
+                    <li><a href="<?php echo $pontos; ?>./Tela/registroProjeto.php">Registrar</a></li>
+                    <li><a href="<?php echo $pontos; ?>./Tela/listagemProjeto.php">Ver Projetos</a></li>
+                </ul>
+            </li>
+            <li>
+                <a class='dropdown-trigger center black-text' style="background-color: transparent" data-hover="true" href='#' data-target='versao'>Versões</a>
+                <ul id='versao' class='dropdown-content'>
+                    <li><a href="<?php echo $pontos; ?>./Tela/registroVersao.php">Registrar</a></li>
+                </ul>
+            </li>
+            <li>
+                <a class='dropdown-trigger center black-text' style="background-color: transparent" data-hover="true" href='#' data-target='aplicativo'>Aplicativos</a>
                 <ul id='aplicativo' class='dropdown-content'>
-                    <!--aplicativoregistro-->
-                    <li><a href="<?php echo $pontos; ?>./Tela/registroAplicativo.php">registro</a></li>
-                    <!--aplicativoregistro-->
-                    <!--aplicativolistagem-->
-                    <li><a href="<?php echo $pontos; ?>./Tela/listagemAplicativo.php">listagem</a></li>
-                    <!--aplicativolistagem-->
-                    <!--aplicativoitem-->
-                
-                
+                    <li><a href="<?php echo $pontos; ?>./Tela/registroAplicativo.php">Registrar</a></li>
+                    <li><a href="<?php echo $pontos; ?>./Tela/listagemAplicativo.php">Ver aplicativos</a></li>
                 </ul>
             </li>
-            <!--aplicativo-->
-            
-            <!--usuario-->
             <li>
-                <a class='dropdown-trigger center black-text' style="background-color: transparent" data-hover="true" href='#' data-target='usuario'>Usuario</a>
-                <ul id='usuario' class='dropdown-content'>
-                    <!--usuariologin-->
-                    <li><a href="<?php echo $pontos; ?>./Tela/login.php">login</a></li>
-                    <!--usuariologin-->
-                    <!--usuarioregistro-->
-                    <li><a href="<?php echo $pontos; ?>./Tela/registroUsuario.php">registro</a></li>
-                    <!--usuarioregistro-->
-                    <!--usuarioitem-->
-                
-                
+                <a class='dropdown-trigger center black-text' style="background-color: transparent" data-hover="true" href='#' data-target='site'>Sites</a>
+                <ul id='site' class='dropdown-content'>
+                    <li><a href="<?php echo $pontos; ?>./Tela/registroSite.php">Registrar</a></li>
+                    <li><a href="<?php echo $pontos; ?>./Tela/listagemSite.php">Ver Sites</a></li>
                 </ul>
             </li>
-            <!--usuario-->
-
-            <!--cliente-->
             <li>
                 <a class='dropdown-trigger center black-text' style="background-color: transparent" data-hover="true" href='#' data-target='cliente'>Cliente</a>
                 <ul id='cliente' class='dropdown-content'>
-                    <!--clientegistro-->
-                    <li><a href="<?php echo $pontos; ?>./Tela/registroCliente.php">registro</a></li>
-                    <!--clienteregistro-->
-                    <!--clientelistagem-->
-                    <li><a href="<?php echo $pontos; ?>./Tela/listagemCliente.php">listagem</a></li>
-                    <!--clientelistagem-->
-                    <!--aclienteitem-->
-
+                    <li><a href="<?php echo $pontos; ?>./Tela/registroCliente.php">Registro</a></li>
+                    <li><a href="<?php echo $pontos; ?>./Tela/listagemCliente.php">Listagem</a></li>
                 </ul>
             </li>
-            <!--cliente-->
-            <!--proximo-->
-
-
-
-
         </ul>
     </div>
 </nav>

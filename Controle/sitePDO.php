@@ -18,42 +18,44 @@ class SitePDO extends PDOBase
         $stmt->bindValue(":dominio", $site->getDominio());
         $stmt->bindValue(":parametros", "/Parametros/" . $site->getDominio() . ".json");
         $stmt->execute();
-        if(realpath("../../".$site->getDominio()."/index.php")) {
+        if (realpath("../../" . $site->getDominio() . "/Modelo/parametros.json")) {
             file_put_contents("../Parametros/" . $site->getDominio() . ".json", file_get_contents("../../" . $site->getDominio() . "/Modelo/parametros.json"));
-        }else{
-            $this->newDomain($site);
+        } else {
+            if (realpath("../../" . $site->getDominio() . "/index.php")) {
+                $this->newDomain($site);
+            }
         }
-
         header('location: ../Tela/listagemSite.php');
     }
 
-    function newDomain(Site $site){
-        if(!realpath("../../".$site->getDominio())) {
+    function newDomain(Site $site)
+    {
+        if (!realpath("../../" . $site->getDominio())) {
             mkdir("../../" . $site->getDominio());
         }
         $versaoPDO = new VersaoPDO();
         $versao = $versaoPDO->selectId_versao($site->getIdVersao());
         $versao = new Versao($versao->fetch());
-        $nomeDB = explode("." , $site->getDominio());
+        $nomeDB = explode(".", $site->getDominio());
         $anterior = clone $versao;
-        while($anterior->getFullSql()==""){
+        while ($anterior->getFullSql() == "") {
             $anterior = $versaoPDO->selectId_versao($versao->getIdAnterior());
             $anterior = new Versao($anterior->fetch());
         }
         $fullSQL = file_get_contents(".." . VersaoPDO::REPO_PATH . $anterior->getFullSql());
-        $fullSQL = explode(";" , $fullSQL);
+        $fullSQL = explode(";", $fullSQL);
         $pdo = conexao::getCustomConect($nomeDB[0]);
-        foreach ($fullSQL as $command){
+        foreach ($fullSQL as $command) {
             $stmt = $pdo->prepare($command);
             $stmt->execute();
         }
-        if($anterior->getIdVersao()!=$versao->getIdVersao()){
+        if ($anterior->getIdVersao() != $versao->getIdVersao()) {
             $nextVersion = $versaoPDO->getNextVersion($versao->getIdProjeto(), $versao->getIdVersao());
             while ($nextVersion) {
                 $proxima = new Versao($nextVersion->fetch());
-                if($proxima->getIdVersao()>$versao->getIdVersao()){
+                if ($proxima->getIdVersao() > $versao->getIdVersao()) {
                     break;
-                }else {
+                } else {
                     $sql = file_get_contents(VersaoPDO::REPO_PATH . $proxima->getUpdateSql());
                     $sqlArr = explode(";", $sql);
                     $nomeDb = explode(".", $site->getDominio());
@@ -111,28 +113,37 @@ class SitePDO extends PDOBase
         $proxima = false;
         while ($nextVersion) {
             $proxima = new Versao($nextVersion->fetch());
-            if($proxima->getIdVersao()>$_POST['id_versao']){
+            if ($proxima->getIdVersao() > $_POST['id_versao']) {
                 break;
-            }else {
-                $sql = file_get_contents(VersaoPDO::REPO_PATH . $proxima->getUpdateSql());
+            } else {
+                $sql = file_get_contents(".." . VersaoPDO::REPO_PATH . $proxima->getUpdateSql());
                 $sqlArr = explode(";", $sql);
                 $nomeDb = explode(".", $site->getDominio());
 
                 $pdo = conexao::getCustomConect($nomeDb[0]);
                 foreach ($sqlArr as $comand) {
+                    $this->log("Comando de atualização: " . $comand);
                     $pdo->exec($comand);
                 }
                 $nextVersion = $versaoPDO->getNextVersion($proxima->getIdProjeto(), $proxima->getIdVersao());
                 $this->addToast("Atualizando banco para: " . $proxima->getNomeVersao());
             }
         }
-        $this->addToast("Versão final: " . $proxima->getNomeVersao());
         if ($proxima) {
+            $this->addToast("Versão final: " . $proxima->getNomeVersao());
             $zip = new ZipArchive();
             $zip->open(".." . VersaoPDO::REPO_PATH . $proxima->getZipFile());
             $zip->extractTo("../../" . $site->getDominio());
         }
-        header("location: ../Tela/detalheSite.php?id_site=".$site->getIdVersao());
+        if (realpath("../Parametros/" . $site->getDominio() . ".json")) {
+            file_put_contents("../../" . $site->getDominio() . "/Modelo/parametros.json", file_get_contents("../Parametros/" . $site->getDominio() . ".json"));
+        }
+        $pdo = conexao::getConexao();
+        $stmt = $pdo->prepare("update site set id_versao = :id_versao where id_site = :id_site");
+        $stmt->bindValue(":id_versao", $proxima->getIdVersao());
+        $stmt->bindValue(":id_site", $site->getIdSite());
+        $stmt->execute();
+        header("location: ../Tela/detalheSite.php?id_site=" . $site->getIdSite());
     }
 
 }

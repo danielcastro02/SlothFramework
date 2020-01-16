@@ -15,11 +15,16 @@ class VersaoPDO extends PDOBase
     {
         $versao = new Versao($_POST);
         $pdo = conexao::getConexao();
-        $stmt = $pdo->prepare("insert into versao values (default, :id_projeto ,null, :nome_versao, :descricao_versao , :nivel , :zip_file , :update_sql , :full_sql);");
+        $stmt = $pdo->prepare("insert into versao values (default, :id_projeto ,:id_anterior, :nome_versao, :descricao_versao , :nivel , :zip_file , :update_sql , :full_sql);");
         $stmt->bindValue(":id_projeto", $versao->getIdProjeto());
         $stmt->bindValue(":nome_versao", $versao->getNomeVersao());
         $stmt->bindValue(":descricao_versao", $versao->getDescricaoVersao());
         $stmt->bindValue(":nivel", $versao->getNivel());
+        if($versao->getIdAnterior()==0){
+            $stmt->bindValue(":id_anterior" , null);
+        }else{
+            $stmt->bindValue(":id_anterior" , $versao->getIdAnterior());
+        }
         $nome = hash_file('md5', $_FILES['arquivo']['tmp_name']);
         $nomesql = hash_file('md5', $_FILES['sql']['tmp_name']);
         $ext = explode('.', $_FILES['arquivo']['name']);
@@ -44,6 +49,14 @@ class VersaoPDO extends PDOBase
         $stmt->bindValue(':update_sql', $nomesql . $extensaosql);
         $stmt->execute();
         header("location: ../Tela/detalheProjeto.php?id_projeto=" . $versao->getIdProjeto());
+    }
+
+    function getUnlinkedVesions($id_projeto){
+        $pdo = conexao::getConexao();
+        $stmt = $pdo->prepare("select * from versao where id_projeto = :id and id_versao not in(SELECT id_anterior from versao where id_anterior is not null)");
+        $stmt->bindValue(":id", $id_projeto);
+        $stmt->execute();
+        return $stmt;
     }
 
     function selectId_projeto($id_projeto)

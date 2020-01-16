@@ -24,7 +24,7 @@ $versao = new Versao($stmtVersao->fetch());
               class="card col l8 offset-l2 m10 offset-m1 s10 offset-s1" method="post">
             <div class="row center">
                 <h4 class="textoCorPadrao2">Cadastrar Versão</h4>
-                <div class="input-field col s4">
+                <div class="input-field col s6">
                     <select name="id_projeto" id="id_projeto">
                         <?php
                         include_once __DIR__ . "/../Controle/projetoPDO.php";
@@ -34,7 +34,7 @@ $versao = new Versao($stmtVersao->fetch());
                         if ($stmt->rowCount() > 0) {
                             while ($linha = $stmt->fetch()) {
                                 $projeto = new Projeto($linha);
-                                echo "<option value='" . $projeto->getIdProjeto() . "'".($projeto->getIdProjeto()==$versao->getIdVersao()?"selected":"").">" . $projeto->getNomeProjeto() . "</option>";
+                                echo "<option value='" . $projeto->getIdProjeto() . "'" . ($projeto->getIdProjeto() == $versao->getIdProjeto() ? "selected" : "") . ">" . $projeto->getNomeProjeto() . "</option>";
                             }
                         } else {
                             echo "<option value='0' disabled selected>Nenhum projeto</option>";
@@ -43,18 +43,38 @@ $versao = new Versao($stmtVersao->fetch());
                     </select>
                     <label for="id_projeto">Projeto</label>
                 </div>
-                <div class="input-field col s4">
-                    <input type="text" name="nome_versao" id="nome_versao" value="<?php echo $versao->getNomeVersao()?>">
+                <div class="input-field col s6">
+                    <input type="text" name="nome_versao" id="nome_versao"
+                           value="<?php echo $versao->getNomeVersao() ?>">
                     <input type="text" name="id_versao" value="<?php echo $versao->getIdVersao() ?>" hidden>
                     <label for="nome_versao">Nome</label>
                 </div>
-                <div class="input-field col s4">
+                <div class="input-field col s6">
                     <select name="nivel" id="nivel">
-                        <option value="0" <?php echo ($versao->getNivel()==0?"selected":"") ?>>Teste</option>
-                        <option value="1" <?php echo ($versao->getNivel()==1?"selected":"") ?>Produção</option>
-                        <option value="2" <?php echo ($versao->getNivel()==2?"selected":"") ?>Correção</option>
+                        <option value="0" <?php echo($versao->getNivel() == 0 ? "selected" : "") ?>>Teste</option>
+                        <option value="1" <?php echo($versao->getNivel() == 1 ? "selected" : "") ?>>Produção</option>
+                        <option value="2" <?php echo($versao->getNivel() == 2 ? "selected" : "") ?>>Correção</option>
                     </select>
                     <label for="nivel">Nível da versão</label>
+                </div>
+                <div class="input-field col s6">
+                    <select name="id_anterior" id="id_anterior">
+                        <?php
+                        include_once "../Base/requerLogin.php";
+                        include_once "../Controle/versaoPDO.php";
+                        include_once "../Modelo/Versao.php";
+                        $versaoPDO = new VersaoPDO();
+                        $stmt = $versaoPDO->getUnlinkedVesions($versao->getIdProjeto());
+                        echo "<option value='0'>Nenhuma versão!</option>";
+                        if ($stmt) {
+                            while ($linha = $stmt->fetch()) {
+                                $versao = new Versao($linha);
+                                echo "<option value='" . $versao->getIdVersao() . "'>" . $versao->getNomeVersao() . " / " . $versao->getTextNivel() . "</option>";
+                            }
+                        }
+                        ?>
+                    </select>
+                    <label for="id_anterior">Versão anterior</label>
                 </div>
                 <div class="input-field col s12">
                     <textarea type="text" name="descricao_versao" id="descricao_versao"
@@ -97,15 +117,22 @@ $versao = new Versao($stmtVersao->fetch());
         </form>
     </div>
     <div class="row center">
-        <a id="excluir" href="../Controle/versaoControle.php?fnction=excluir&id_versao=<?php echo $versao->getIdVersao() ?>" class="btn red darken-3">Excluir</a>
+        <a id="excluir"
+           href="../Controle/versaoControle.php?fnction=excluir&id_versao=<?php echo $versao->getIdVersao() ?>"
+           class="btn red darken-3">Excluir</a>
     </div>
     <script>
         $("select").formSelect();
+        $("#id_projeto").change(function () {
+            $("#id_anterior").load("../Tela/loadVersaoAnterior.php?id_projeto=" + $("#id_projeto").val(), function () {
+                $('select').formSelect();
+            });
+        });
         $("#excluir").click(function () {
-            if(confirm("Você tem certeza do que está fazendo??")){
+            if (confirm("Você tem certeza do que está fazendo??")) {
                 return confirm("Esta ação só é recomendada em caso de erro, ainda assim encorajamos que edite a versão ao invés de excluilo!\n" +
                     "Clique em cancelar para ir para a tela de edição!");
-            }else{
+            } else {
                 return false;
             }
         });

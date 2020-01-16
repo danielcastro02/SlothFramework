@@ -46,7 +46,7 @@ $nextVersions = $versaoPDO->selectNextVersions($projeto->getIdProjeto() , $versa
                     Versão: <?php echo $versao->getNomeVersao(); ?></h5>
             </div>
             <h5>Atualizar</h5>
-            <form action="../Controle/siteControle.php?function=atualizar&id_site=<?php echo $_GET['id_site']; ?>">
+            <form action="../Controle/siteControle.php?function=atualizar&id_site=<?php echo $_GET['id_site']; ?>" method="post">
                 <select name="id_versao" id="id_versao">
                     <option selected disabled value="0">Selecione</option>
                     <?php
@@ -58,7 +58,7 @@ $nextVersions = $versaoPDO->selectNextVersions($projeto->getIdProjeto() , $versa
                         }
                     ?>
                 </select>
-                <input type="submit" value="Atualizar"/>
+                <input type="submit" value="Atualizar" class="btn corPadrao2"/>
                 <input hidden name="versao_anterior" value="<?php echo $site->getIdVersao()?>">
             </form>
             <div class="row center">
@@ -76,6 +76,7 @@ $nextVersions = $versaoPDO->selectNextVersions($projeto->getIdProjeto() , $versa
                 return false;
             }
         });
+        $("select").formSelect();
     </script>
 </main>
 <?php

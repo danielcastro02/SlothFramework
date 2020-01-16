@@ -170,15 +170,15 @@ class UsuarioPDO{
         if ($stmt->rowCount() > 0) {
             $linha = $stmt->fetch(PDO::FETCH_ASSOC);
             $_SESSION['logado'] = serialize(new Usuario($linha));
-            header("Location: ../index.php");
+            header("Location: ../home.php");
         } else {
-            header("Location: ../Tela/login.php?msg=erro");
+            header("Location: ../index.php?msg=erro");
         }
     }
     
     function logout(){
         session_destroy();
-        header('location: ../Tela/login.php');
+        header('location: ../index.php');
     }
     
 /*login*/
