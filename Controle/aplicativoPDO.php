@@ -47,7 +47,7 @@ class AplicativoPDO {
         move_uploaded_file($_FILES['arquivo_firebase']["tmp_name"], '..' . self::REPO_FIREBASE . $nome . $extensao);
         $stmt->bindValue(':arquivo_firebase', $nome . $extensao);
 
-        $stmt->execute();
+        if($stmt->execute()){
             header('location: ../Tela/home.php?msg=aplicativoInserido');
         } else {
             header('location: ../Tela/home.php?msg=aplicativoErroInsert');
