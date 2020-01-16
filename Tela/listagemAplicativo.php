@@ -44,7 +44,7 @@ include_once '../Base/requerLogin.php';
                             <td class="center"><?php echo $cliente->getNomeCliente()?></td>
                             <td class="center"><?php echo $aplicativo->getNomePacote()?></td>
                             <td class="center"><a class="btn blue lighten-1" href="<?php echo '..'.AplicativoPDO::REPO_KEYS.$aplicativo->getChaveAtualizacao(); ?>" download>Download</a></td>
-                            <td class="center"><a class="btn blue lighten-1" href="<?php echo '..'.AplicativoPDO::REPO_KEYS.$aplicativo->getArquivoFirebase(); ?>" download>Download</a></td>
+                            <td class="center"><a class="btn blue lighten-1" href="<?php echo '..'.AplicativoPDO::REPO_FIREBASE.$aplicativo->getArquivoFirebase(); ?>" download>Download</a></td>
                             <td class="center"><a href="detalhesApp.php?id_app=<?php echo $aplicativo->getIdAplicativo() ?>" class="btn corPadrao2">Detalhes</a></td>
                             <td class = 'center'><a class="btn corPadrao2" href="./editarAplicativo.php?id=<?php echo $aplicativo->getIdAplicativo()?>">Editar</a></td>
                             <td class="center"><a class="btn red darken-2" href="../Controle/aplicativoControle.php?function=deletar&id=<?php echo $aplicativo->getIdAplicativo()?>">Excluir</a></td>
