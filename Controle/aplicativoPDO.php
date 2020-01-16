@@ -16,25 +16,38 @@ if (realpath('./index.php')) {
 }
 
 class AplicativoPDO {
+
+    const REPO_KEYS = "/Repo/Chaves/";
+    const REPO_VERSION = "/Repo/Versions/";
+    const REPO_FIREBASE = "/Repo/Firebase/";
     /* inserir */
 
     function inserirAplicativo() {
         $aplicativo = new Aplicativo($_POST);
         $con = new conexao();
         $pdo = $con->getConexao();
-        $stmt = $pdo->prepare('insert into aplicativo values(default , :cliente , :nome_pacote , :chave , :dominio , :arquivo_firebase);');
+        $stmt = $pdo->prepare('insert into aplicativo values(default , :cliente, :id_versao, :id_site, :nome_pacote , :chave , :arquivo_firebase);');
 
         $stmt->bindValue(':cliente', $aplicativo->getIdCliente());
-
+        $stmt->bindValue(':id_versao', $aplicativo->getIdVersao());
+        $stmt->bindValue(':id_site', $aplicativo->getIdSite());
         $stmt->bindValue(':nome_pacote', $aplicativo->getNomePacote());
-        mkdir("../Img/Chaves/".$aplicativo->getIdCliente());
-        $stmt->bindValue(':chave', "Img/Chaves/" . $aplicativo->getCliente() . "/" . $_FILES['chave']['name']);
-        move_uploaded_file($_FILES['chave']['tmp_name'], "../Img/Chaves/" . $aplicativo->getCliente() . "/" . $_FILES['chave']['name']);
-        move_uploaded_file($_FILES['arquivo_firebase']['tmp_name'], "../Img/Chaves/" . $aplicativo->getCliente() . "/" . $_FILES['arquivo_firebase']['name']);
-        $stmt->bindValue(':dominio', $aplicativo->getDominio());
 
-        $stmt->bindValue(':arquivo_firebase', "Img/Chaves/" . $aplicativo->getCliente() . "/" . $_FILES['arquivo_firebase']['name']);
-        if ($stmt->execute()) {
+        $nome = hash_file('md5', $_FILES['chave']['tmp_name']);
+        $ext = explode('.', $_FILES['chave']['name']);
+        $extensao = "." . $ext[(count($ext) - 1)];
+        $extensao = strtolower($extensao);
+        move_uploaded_file($_FILES['chave']["tmp_name"], '..' . self::REPO_KEYS . $nome . $extensao);
+        $stmt->bindValue(':chave', $nome . $extensao);
+
+        $nome = hash_file('md5', $_FILES['arquivo_firebase']['tmp_name']);
+        $ext = explode('.', $_FILES['arquivo_firebase']['name']);
+        $extensao = "." . $ext[(count($ext) - 1)];
+        $extensao = strtolower($extensao);
+        move_uploaded_file($_FILES['arquivo_firebase']["tmp_name"], '..' . self::REPO_FIREBASE . $nome . $extensao);
+        $stmt->bindValue(':arquivo_firebase', $nome . $extensao);
+
+        $stmt->execute();
             header('location: ../Tela/home.php?msg=aplicativoInserido');
         } else {
             header('location: ../Tela/home.php?msg=aplicativoErroInsert');
