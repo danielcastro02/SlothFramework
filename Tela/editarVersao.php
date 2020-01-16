@@ -64,8 +64,26 @@ $versao = new Versao($stmtVersao->fetch());
 
                 <div class="file-field col s12 input-field">
                     <div class="btn">
-                        <span>File</span>
+                        <span>Zip da versão</span>
                         <input type="file" name="arquivo">
+                    </div>
+                    <div class="file-path-wrapper">
+                        <input class="file-path validate" type="text">
+                    </div>
+                </div>
+                <div class="file-field col s12 input-field">
+                    <div class="btn">
+                        <span>Update SQL</span>
+                        <input type="file" name="sql">
+                    </div>
+                    <div class="file-path-wrapper">
+                        <input class="file-path validate" type="text">
+                    </div>
+                </div>
+                <div class="file-field col s12 input-field">
+                    <div class="btn">
+                        <span>Full SQL</span>
+                        <input type="file" name="full_sql">
                     </div>
                     <div class="file-path-wrapper">
                         <input class="file-path validate" type="text">

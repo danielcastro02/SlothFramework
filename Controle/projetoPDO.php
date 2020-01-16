@@ -20,12 +20,12 @@ class ProjetoPDO extends PDOBase
     }
 
     function selectAll(): PDOStatement
-    {
-        $pdo = conexao::getConexao();
-        $stmt = $pdo->prepare("select * from projeto");
-        $stmt->execute();
-        return $stmt;
-    }
+{
+    $pdo = conexao::getConexao();
+    $stmt = $pdo->prepare("select * from projeto");
+    $stmt->execute();
+    return $stmt;
+}
 
     function selectId_projeto($id){
         $pdo = conexao::getConexao();

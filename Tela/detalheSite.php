@@ -34,26 +34,45 @@ $projeto = $projetoPDO->selectId_projeto($versao->getIdProjeto());
 $projeto = new Projeto($projeto->fetch());
 $cliente = $clientePDO->selectClienteId_cliente($site->getIdCliente());
 $cliente = new Cliente($cliente->fetch());
+$nextVersions = $versaoPDO->selectNextVersions($projeto->getIdProjeto() , $versao->getIdVersao());
 ?>
 <main>
     <div class="row" style="margin-top: 3vh;">
         <div class="col s12 l10 offset-l1">
             <div class="row card center">
-                <h5><?php echo $site->getDominio() ?></h5>
-                <p>Projeto: <?php echo $projeto->getNomeProjeto(); ?> Versão: <?php echo $versao->getNomeVersao(); ?></p>
+                <h4>Domínio <?php echo $site->getDominio() ?></h4>
                 <h5>Cliente: <?php echo $cliente->getNomeCliente(); ?></h5>
+                <h5>Projeto: <?php echo $projeto->getNomeProjeto(); ?>
+                    Versão: <?php echo $versao->getNomeVersao(); ?></h5>
             </div>
+            <h5>Atualizar</h5>
+            <form action="../Controle/siteControle.php?function=atualizar&id_site=<?php echo $_GET['id_site']; ?>">
+                <select name="id_versao" id="id_versao">
+                    <option selected disabled value="0">Selecione</option>
+                    <?php
+                        if($nextVersions){
+                            while($linha = $nextVersions->fetch()){
+                                $vers = new Versao($linha);
+                                echo "<option value='".$vers->getIdVersao()."'>".$vers->getNomeVersao()." / ".$vers->getTextNivel()."</option>";
+                            }
+                        }
+                    ?>
+                </select>
+                <input type="submit" value="Atualizar"/>
+                <input hidden name="versao_anterior" value="<?php echo $site->getIdVersao()?>">
+            </form>
             <div class="row center">
-                <a id='excluir' class="btn red darken-3" href="../Controle/projetoPDO.php?function=excluir&id_projeto=<?php echo $projeto->getIdProjeto() ?>">Excluir</a>
+                <a id='excluir' class="btn red darken-3"
+                   href="../Controle/projetoPDO.php?function=excluir&id_projeto=<?php echo $projeto->getIdProjeto() ?>">Excluir</a>
             </div>
         </div>
     </div>
     <script>
         $("#excluir").click(function () {
-            if(confirm("Você tem certeza do que está fazendo??")){
+            if (confirm("Você tem certeza do que está fazendo??")) {
                 return confirm("Esta ação só é recomendada em caso de erro, ainda assim encorajamos que edite o projeto ao invés de excluilo!\n" +
                     "Clique em cancelar para ir para a tela de edição!");
-            }else{
+            } else {
                 return false;
             }
         });

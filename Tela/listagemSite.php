@@ -48,7 +48,7 @@ include_once '../Modelo/Site.php';
                         $site = new Site($linha);
                         $versao = $versaoPDO->selectId_versao($site->getIdVersao());
                         $versao = new Versao($versao->fetch());
-                        $projeto = $projetoPDO->selectId_projeto($versao->getIdVersao());
+                        $projeto = $projetoPDO->selectId_projeto($versao->getIdProjeto());
                         $projeto = new Projeto($projeto->fetch());
                         $cliente = $clientePDO->selectClienteId_cliente($site->getIdCliente());
                         $cliente = new Cliente($cliente->fetch());
@@ -58,8 +58,8 @@ include_once '../Modelo/Site.php';
                             <td><?php echo $cliente->getNomeCliente() ?></td>
                             <td><?php echo $projeto->getNomeProjeto() ?></td>
                             <td><?php echo $versao->getNomeVersao() ?></td>
-                            <td><a class="btn corPadrao2" href="./detalheSite.php?id_projeto=<?php echo $site->getIdSite() ?>">Detalhes</a></td>
-                            <td><a class="btn corPadrao2" href="./editarSite.php?id_projeto=<?php echo $site->getIdSite() ?>">Editar</a></td>
+                            <td><a class="btn corPadrao2" href="./detalheSite.php?id_site=<?php echo $site->getIdSite() ?>">Detalhes</a></td>
+                            <td><a class="btn corPadrao2" href="./editarSite.php?id_site=<?php echo $site->getIdSite() ?>">Editar</a></td>
                         </tr>
                         <?php
                     }
