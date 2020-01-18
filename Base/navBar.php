@@ -57,6 +57,13 @@ if (realpath("./index.php")) {
                     <li><a href="<?php echo $pontos; ?>./Tela/listagemCliente.php">Listagem</a></li>
                 </ul>
             </li>
+            <li>
+                <a class='dropdown-trigger center black-text' style="background-color: transparent" data-hover="true" href='#' data-target='usuario'>Usuario</a>
+                <ul id='usuario' class='dropdown-content'>
+                    <li><a href="<?php echo $pontos; ?>./Tela/registroUsuario.php">Registro</a></li>
+                    <li><a href="<?php echo $pontos; ?>./Tela/listagemUsuario.php">Listagem</a></li>
+                </ul>
+            </li>
         </ul>
     </div>
 </nav>

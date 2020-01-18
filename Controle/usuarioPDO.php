@@ -131,28 +131,56 @@ class UsuarioPDO{
         $pdo = $con->getConexao();
         $stmt = $pdo->prepare('update usuario set nome = :nome , usuario = :usuario , senha = :senha where id_usuario = :id_usuario;');
         $stmt->bindValue(':nome', $usuario->getNome());
-        
         $stmt->bindValue(':usuario', $usuario->getUsuario());
-        
         $stmt->bindValue(':senha', $usuario->getSenha());
-        
         $stmt->bindValue(':id_usuario', $usuario->getId_usuario());
         $stmt->execute();
         return $stmt->rowCount();
     }            
     
-    public function deleteUsuario($definir){
+    public function deleteUsuario(){
+        $id_usuario = $_GET['id_usuario'];
         $con = new conexao();
         $pdo = $con->getConexao();
         $stmt = $pdo->prepare('delete from usuario where id_usuario = :definir ;');
-        $stmt->bindValue(':definir', $definir);
-        $stmt->execute();
-        return $stmt->rowCount();
+        $stmt->bindValue(':definir', $id_usuario);
+        if($stmt->execute()) {
+            $_SESSION['toast'][] = "Usuario excluido";
+            header('location: ../Tela/listagemUsuario.php');
+        } else {
+            $_SESSION['toast'][] = "Erro ao excluir usuario";
+            header('location: ../Tela/listagemUsuario.php');
+        }
     }
-    
-    public function deletar(){
-        $this->deleteUsuario($_GET['id']);
-        header('location: ../Tela/listarUsuario.php');
+
+    function editar() {
+        $usuario = new usuario($_POST);
+        $oldUser = new usuario($this->selectUsuarioId_usuario($usuario->getId_usuario())->fetch());
+        $con = new conexao();
+        $pdo = $con->getConexao();
+        $stmt = $pdo->prepare('update usuario set nome = :nome, usuario = :usuario, senha = :senha where id_usuario = :id_usuario');
+        if($_POST['senha1'] == ""){
+            $stmt->bindValue(":senha", $oldUser->getSenha());
+        } else {
+            if($_POST['senha1'] == $_POST['senha2']) {
+                $senha = md5($_POST['senha1']);
+                $stmt->bindValue(":senha", $senha);
+            } else {
+                $_SESSION['toast'][] = "As senhas não são iguais";
+                header("Location: ../Tela/editarUsuario.php?id_usuario=".$usuario->getId_usuario());
+            }
+        }
+        $stmt->bindValue(":nome", $usuario->getNome());
+        $stmt->bindValue(":usuario", $usuario->getUsuario());
+        $stmt->bindValue(":id_usuario", $usuario->getId_usuario());
+        $stmt->execute();
+        if($stmt->execute()){
+            $_SESSION['toast'][] = "Usuario alterado";
+            header("Location: ../Tela/listagemUsuario.php");
+        } else {
+            $_SESSION['toast'][] = "Erro ao alterar usuario";
+            header("Location: ../Tela/editarUsuario.php?id_usuario=".$usuario->getId_usuario());
+        }
     }
 
 
