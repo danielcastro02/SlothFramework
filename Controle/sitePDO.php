@@ -90,20 +90,22 @@ class SitePDO extends PDOBase
     }
 
 
-    function selectSiteIdCliente($id_cliente) {
+    function selectSiteIdCliente($id_cliente)
+    {
         $pdo = conexao::getConexao();
         $stmt = $pdo->prepare("select * from site where id_cliente = :id_cliente");
         $stmt->bindValue(":id_cliente", $id_cliente);
         $stmt->execute();
-        if($stmt->rowCount()>0){
+        if ($stmt->rowCount() > 0) {
             return $stmt;
-        }else{
+        } else {
             return false;
         }
     }
 
 
-    function selectSiteIdSite($id_site){
+    function selectSiteIdSite($id_site)
+    {
 
         $pdo = conexao::getConexao();
         $stmt = $pdo->prepare("select * from site where id_site = :id_site");
@@ -130,17 +132,20 @@ class SitePDO extends PDOBase
             if ($proxima->getIdVersao() > $_POST['id_versao']) {
                 break;
             } else {
-                $sql = file_get_contents(".." . VersaoPDO::REPO_PATH . $proxima->getUpdateSql());
-                $sqlArr = explode(";", $sql);
-                $nomeDb = explode(".", $site->getDominio());
+                if ($proxima->getUpdateSql() != ".") {
+                    $sql = file_get_contents(".." . VersaoPDO::REPO_PATH . $proxima->getUpdateSql());
+                    $sqlArr = explode(";", $sql);
+                    $nomeDb = explode(".", $site->getDominio());
 
-                $pdo = conexao::getCustomConect($nomeDb[0]);
-                foreach ($sqlArr as $comand) {
-                    $this->log("Comando de atualização: " . $comand);
-                    $pdo->exec($comand);
+                    $pdo = conexao::getCustomConect($nomeDb[0]);
+                    foreach ($sqlArr as $comand) {
+                        $this->log("Comando de atualização: " . $comand);
+                        $pdo->exec($comand);
+                    }
                 }
                 $nextVersion = $versaoPDO->getNextVersion($proxima->getIdProjeto(), $proxima->getIdVersao());
                 $this->addToast("Atualizando banco para: " . $proxima->getNomeVersao());
+
             }
         }
         if ($proxima) {
