@@ -100,7 +100,7 @@ class VersaoPDO extends PDOBase
         $stmt->bindValue(":nome_versao", $versao->getNomeVersao());
         $stmt->bindValue(":descricao_versao", $versao->getDescricaoVersao());
         $stmt->bindValue(":nivel", $versao->getNivel());
-        $stmt->execute();
+
         if (isset($_FILES['arquivo'])) {
             unlink(".." . self::REPO_PATH . $oldVersao->getZipFile());
             $nome = hash_file('md5', $_FILES['arquivo']['tmp_name']);
@@ -134,6 +134,7 @@ class VersaoPDO extends PDOBase
         } else {
             $stmt->bindValue(':full_sql', $oldVersao->getFullSql());
         }
+        $stmt->execute();
         header("location: ../Tela/detalheProjeto.php?id_projeto=" . $versao->getIdProjeto());
     }
 
