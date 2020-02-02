@@ -135,9 +135,10 @@ class SitePDO extends PDOBase
                 if ($proxima->getUpdateSql() != ".") {
                     $sql = file_get_contents(".." . VersaoPDO::REPO_PATH . $proxima->getUpdateSql());
                     $sqlArr = explode(";", $sql);
-                    $nomeDb = explode(".", $site->getDominio());
-
-                    $pdo = conexao::getCustomConect($nomeDb[0]);
+                    $parametros = json_decode("../../".$site->getDominio()."/Modelo/parametros.json" , true);
+                    $nomeDb = $parametros['nome_db'];
+                    $this->addToast("Banco selecionado: ".$nomeDb);
+                    $pdo = conexao::getCustomConect($nomeDb);
                     foreach ($sqlArr as $comand) {
                         $this->log("Comando de atualização: " . $comand);
                         $pdo->exec($comand);
