@@ -1,4 +1,6 @@
-<!DOCTYPE html>
+<?php
+include_once '../Base/requerLogin.php';
+?><!DOCTYPE html>
 <?php
 include_once '../Controle/bancoPDO.php';
 $bancoPDO = new bancoPDO();
