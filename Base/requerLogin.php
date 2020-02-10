@@ -17,7 +17,7 @@ if (!isset($_SESSION)) {
     session_start();
 }
 if (!isset($_SESSION['logado'])) {
-    header('location: ' . $pontos . "Tela/login.php?url=.." . $_SERVER['REQUEST_URI']);
+    header('location: ' . $pontos . "index.php?url=.." . $_SERVER['REQUEST_URI']);
 } else {
     $logado = new usuario(unserialize($_SESSION['logado']));
 }

@@ -19,6 +19,8 @@ $parametros = new Parametros();
     <div class="nav-wrapper" style="width: 100vw; margin-left: auto; margin-right: auto;">
         <a href="<?php echo $pontos; ?>./Tela/home.php" class="brand-logo">SlothFramework</a>
         <ul class="right hide-on-med-and-down">
+            <li><a class="center" href="#!"><?php echo $parametros->getNomeDb() ?></a> </li>
+            <li><a class="center" href="#!" id="defineBanco">Definir banco</a> </li>
             <li><a class="center" href="#!"><?php echo $parametros->getDestino() ?></a> </li>
             <li><a class="center" href="#!" id="defineCaminho">Definir destino</a> </li>
             <li>
@@ -73,6 +75,8 @@ $parametros = new Parametros();
                 }
                 ?>
             </li>
+            <li><a class="center" href="<?php echo $pontos; ?>/Controle/usuarioControle.php?function=logout">Sair</a> </li>
+
         </ul>
     </div>
 
@@ -107,15 +111,31 @@ $parametros = new Parametros();
 
     $("#defineCaminho").click(function(){
         var caminho = prompt("Insira o caiminho:");
-        $.ajax({
-            url: "<?php echo $pontos ?>Controle/parametrosControle.php?function=alteraDestino&destino="+caminho,
-            success: function (data) {
-                if(data == 'true'){
-                    alert("Trocado!");
-                    location.reload();
+        if(caminho!='null') {
+            $.ajax({
+                url: "<?php echo $pontos ?>Controle/parametrosControle.php?function=alteraDestino&destino=" + caminho,
+                success: function (data) {
+                    if (data == 'true') {
+                        alert("Trocado!");
+                        location.reload();
+                    }
                 }
-            }
-        })
+            });
+        }
+    });
+    $("#defineBanco").click(function(){
+        var caminho = prompt("Insira o banco:");
+        if(caminho!='null') {
+            $.ajax({
+                url: "<?php echo $pontos ?>Controle/parametrosControle.php?function=alteraBanco&nomeDb=" + caminho,
+                success: function (data) {
+                    if (data == 'true') {
+                        alert("Trocado!");
+                        location.reload();
+                    }
+                }
+            });
+        }
     });
 
 </script>

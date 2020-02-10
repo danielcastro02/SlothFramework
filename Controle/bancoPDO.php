@@ -1,6 +1,7 @@
 <?php
 
-include_once '../Base/requerLogin.php';
+include_once __DIR__.'/../Base/requerLogin.php';
+include_once __DIR__.'/../Modelo/Parametros.php';
 
 if (realpath("./index.php") && realpath("./conexao.php")) {
     include_once "./Modelo/Gerador.php";
@@ -26,8 +27,8 @@ class bancoPDO {
 
     function criarTudo() {
         $geradorPDO = new geradorPDO();
-        $con = new conexao();
-        $pdo = $con->getConexao();
+        $parametros = new Parametros();
+        $pdo = conexao::getCustomConect($parametros->getNomeDb());
         $stmt = $pdo->prepare("show tables");
         $stmt->execute();
         while ($linha = $stmt->fetch()) {
@@ -47,8 +48,8 @@ class bancoPDO {
     function criarEspecifico() {
         $nomeTabela = $_POST['nome'];
         $geradorPDO = new geradorPDO();
-        $con = new conexao();
-        $pdo = $con->getConexao();
+        $parametros = new Parametros();
+        $pdo = conexao::getCustomConect($parametros->getNomeDb());
         $stmt2 = $pdo->prepare("show columns from " . $nomeTabela);
         $stmt2->execute();
         $semente = new gerador();
@@ -62,16 +63,16 @@ class bancoPDO {
     }
     
     function selectTables(){
-        $con = new conexao();
-        $pdo = $con->getConexao();
+        $parametros = new Parametros();
+        $pdo = conexao::getCustomConect($parametros->getNomeDb());
         $stmt = $pdo->prepare("show tables");
         $stmt->execute();
         return $stmt;
     }
     
     function selectColunas($tabela){
-        $con = new conexao();
-        $pdo = $con->getConexao();
+        $parametros = new Parametros();
+        $pdo = conexao::getCustomConect($parametros->getNomeDb());
         $stmt = $pdo->prepare("show columns from " . $tabela);
         $stmt->execute();
         return $stmt;
