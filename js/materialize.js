@@ -11925,6 +11925,12 @@ $jscomp.polyfill = function (e, r, p, m) {
           liEl.prepend(imgEl);
         }
 
+        var iconUrl = option.getAttribute('data-iconn');
+        if (!!iconUrl) {
+          var imgEl = $("<div alt=\"\" style=\"background-image: url(" + iconUrl + "); float: left; margin: 8px 8px 0 8px; border-radius: 5%; height: 30px; width: 30px; background-position: center; background-size: cover; background-position: center; background-repeat: no-repeat; object-fit: cover; object-position: center;  \">");
+          liEl.prepend(imgEl);
+        }
+
         // Check for multiple type.
         $(this.dropdownOptions).append(liEl[0]);
         return liEl[0];

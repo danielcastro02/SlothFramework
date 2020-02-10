@@ -3,25 +3,9 @@
 include_once __DIR__.'/../Base/requerLogin.php';
 include_once __DIR__.'/../Modelo/Parametros.php';
 
-if (realpath("./index.php") && realpath("./conexao.php")) {
-    include_once "./Modelo/Gerador.php";
-    include_once "./Controle/conexao.php";
-    include_once "./Controle/geradorPDO.php";
-} else {
-    if (realpath("../index.php") && realpath("../Controle/conexao.php")) {
-        include_once "../Modelo/Gerador.php";
-        include_once "../Controle/conexao.php";
-        include_once "../Controle/geradorPDO.php";
-    } else {
-        if (realpath("../../index.php") && realpath("../../Controle/conexao.php")) {
-            include_once "../../Modelo/Gerador.php";
-            include_once "../../Controle/conexao.php";
-            include_once "../../Controle/geradorPDO.php";
-        } else {
-            header('location: ../Tela/criaConexao.php');
-        }
-    }
-}
+        include_once __DIR__."/../Modelo/Gerador.php";
+        include_once __DIR__."/../Controle/conexao.php";
+        include_once __DIR__."/../Controle/geradorPDO.php";
 
 class bancoPDO {
 

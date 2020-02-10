@@ -1,28 +1,11 @@
 <?php
 include_once '../Base/requerLogin.php';
 
-if (realpath("./index.php") && realpath("./conexao.php")) {
-    include_once "./Modelo/Gerador.php";
-    include_once "./Controle/conexao.php";
-    include_once "./Controle/geradorPDO.php";
-    include_once "./Controle/bancoPDO.php";
-} else {
-    if (realpath("../index.php") && realpath("../Controle/conexao.php")) {
-        include_once "../Modelo/Gerador.php";
-        include_once "../Controle/conexao.php";
-        include_once "../Controle/geradorPDO.php";
-        include_once "../Controle/bancoPDO.php";
-    } else {
-        if (realpath("../../index.php") && realpath("../../Controle/conexao.php")) {
-            include_once "../../Modelo/Gerador.php";
-            include_once "../../Controle/conexao.php";
-            include_once "../../Controle/geradorPDO.php";
-            include_once "../../Controle/bancoPDO.php";
-        } else {
-            header('location: ../Tela/criaConexao.php');
-        }
-    }
-}
+        include_once __DIR__."/../Modelo/Gerador.php";
+        include_once __DIR__."/../Controle/conexao.php";
+        include_once __DIR__."/../Controle/geradorPDO.php";
+        include_once __DIR__."/../Controle/bancoPDO.php";
+        include_once __DIR__."/../Modelo/Parametros.php";
 
 class interfacesPDO {
 
@@ -39,33 +22,36 @@ class interfacesPDO {
         while ($linha = $colunas->fetch()) {
             $atributos[] = $linha[0];
         }
+        $parametros = new Parametros();
         $semente->setAtributo($atributos);
-        if (!realpath("../Modelo/" . ucfirst($tabela) . ".php")) {
+        if (!realpath(__DIR__."/../".$parametros->getDestino()."Modelo/" . ucfirst($tabela) . ".php")) {
 
             $geradorPDO->geraModelo($semente);
         }
 
-        $pdoantiga = file_get_contents("../Controle/" . $tabela . "PDO.php");
+        $pdoantiga = file_get_contents(__DIR__."/../".$parametros->getDestino()."/Controle/" . $tabela . "PDO.php");
         $pdoantigapartes = explode("/*login*/", $pdoantiga);
         if (count($pdoantigapartes) > 1) {
             $pdoantiga = $pdoantigapartes[0] . $pdoantigapartes[2];
         }
         $pdoantiga = str_replace("/*chave*/}", "", $pdoantiga);
-
         $conteudo = $pdoantiga . "
             /*login*/
     public function login() {
         \$con = new conexao();
         \$pdo = \$con->getConexao();
-        \$senha = md5(\$_POST['$senha']);
-        \$stmt = \$pdo->prepare(\"SELECT * FROM $tabela WHERE $usuario LIKE :$usuario AND $senha LIKE :$senha\");
+        
+        \$stmt = \$pdo->prepare(\"SELECT * FROM $tabela WHERE $usuario LIKE :$usuario \");
         \$stmt->bindValue(\":$usuario\", \$_POST['$usuario']);
-        \$stmt->bindValue(\":$senha\", \$senha);
         \$stmt->execute();
         if (\$stmt->rowCount() > 0) {
             \$linha = \$stmt->fetch(PDO::FETCH_ASSOC);
-            \$_SESSION['logado'] = serialize(new " . ucfirst($tabela) . "(\$linha));
-            header(\"Location: ../index.php\");
+            if(password_verify(\$linha['$senha'] , \$_POST['$senha']){
+               \$_SESSION['logado'] = serialize(new " . ucfirst($tabela) . "(\$linha));
+                header(\"Location: ../index.php\");
+            }else{
+                header(\"Location: ../Tela/login.php?msg=erro\");
+            }
         } else {
             header(\"Location: ../Tela/login.php?msg=erro\");
         }
@@ -80,7 +66,7 @@ class interfacesPDO {
 
 /*chave*/}
 ";
-        file_put_contents("../Controle/" . $tabela . "PDO.php", $conteudo);
+        file_put_contents(__DIR__."/../".$parametros->getDestino()."Controle/" . $tabela . "PDO.php", $conteudo);
 
         $conteudo = "<!DOCTYPE html>
             <?php
@@ -138,10 +124,10 @@ class interfacesPDO {
 </html>
 
 ";
-        file_put_contents("../Tela/login.php", $conteudo);
+        file_put_contents(__DIR__."/../".$parametros->getDestino()."Tela/login.php", $conteudo);
         $interfacePDO = new interfacesPDO();
         $interfacePDO->adicionaItemNav($semente, "login.php", "login");
-        header('location: ../Tela/login.php');
+        header('location: ../Tela/home.php');
     }
 
     function insertUsuario() {
@@ -163,14 +149,15 @@ class interfacesPDO {
 
             $geradorPDO->geraModelo($semente);
         }
-        $pdoantiga = file_get_contents("../Controle/" . $tabela . "PDO.php");
+        $parametros = new Parametros();
+        $pdoantiga = file_get_contents(__DIR__."/../".$parametros->getDestino()."Controle/" . $tabela . "PDO.php");
         $pdoantigapartes = explode("/*inserir*/", $pdoantiga);
         $conteudo = $pdoantigapartes[0] . "
              /*inserir*/
     function inserir" . $nome . "() {
         \$" . $nomeNormal . " = new " . $nomeNormal . "(\$_POST);
         if(\$_POST['senha1'] == \$_POST['senha2']){
-            \$senhamd5 = md5(\$_POST['senha1']);
+            \$senha = password_hash(\$_POST['senha1'] , PASSWORD_DEFAULT);
             \$con = new conexao();
             \$pdo = \$con->getConexao();
             \$stmt = \$pdo->prepare('insert into " . $nome . " values(";
@@ -212,7 +199,7 @@ class interfacesPDO {
     }
     /*inserir*/
                 " . $pdoantigapartes[2];
-        file_put_contents("../Controle/" . $nomeNormal . "PDO.php", $conteudo);
+        file_put_contents(__DIR__."/../".$parametros->getDestino()."Controle/" . $nomeNormal . "PDO.php", $conteudo);
 
         $conteudo = "<!DOCTYPE html>
 <html>
@@ -274,10 +261,10 @@ if (isset(\$_GET['msg'])) {
 
 ";
 
-        file_put_contents("../Tela/registroUsuario.php", $conteudo);
+        file_put_contents(__DIR__."/../".$parametros->getDestino()."Tela/registroUsuario.php", $conteudo);
         $intefacePDO = new interfacesPDO();
         $intefacePDO->adicionaItemNav($semente, 'registroUsuario.php', 'registro');
-        header('location: ../Tela/registroUsuario.php');
+        header('location: ../Tela/home.php');
     }
 
     function criarListagem() {
@@ -341,6 +328,7 @@ if (isset(\$_GET['msg'])) {
                         }
                     }
                     ?>
+                    <!--fimtabela-->
                     </table>
             </div>
         </main>
@@ -351,15 +339,16 @@ if (isset(\$_GET['msg'])) {
 </html>
 
 ";
-        file_put_contents("../Tela/listagem" . $nomeMaiuscula . ".php", $conteudo);
+        file_put_contents(__DIR__."/../".$parametros->getDestino()."Tela/listagem" . $nomeMaiuscula . ".php", $conteudo);
         $intefacePDO = new interfacesPDO();
         $intefacePDO->adicionaItemNav($semente, "listagem" . $nomeMaiuscula . ".php", 'listagem');
 
-        header('location: ../Tela/listagem' . $nomeMaiuscula . '.php');
+        header('location: ../Tela/home.php');
     }
 
     public function telaInsert() {
         $tabela = $_POST['nome'];
+        $parametros = new Parametros();
         $bancoPDO = new bancoPDO();
         $geradorPDO = new geradorPDO();
         $nome = ucfirst($tabela);
@@ -371,18 +360,17 @@ if (isset(\$_GET['msg'])) {
         $semente = new gerador();
         $semente->setNome($tabela);
         $semente->setAtributo($atributos);
-        if (!realpath("../Controle/$tabela" . "PDO.php")) {
+        if (!realpath(__DIR__."/../".$parametros->getDestino()."Controle/$tabela" . "PDO.php")) {
 
             $geradorPDO->geraModelo($semente);
         }
-        $pdoantiga = file_get_contents("../Controle/" . $tabela . "PDO.php");
+        $pdoantiga = file_get_contents(__DIR__."/../".$parametros->getDestino()."Controle/" . $tabela . "PDO.php");
         $pdoantigapartes = explode("/*inserir*/", $pdoantiga);
         $conteudo = $pdoantigapartes[0] . "
              /*inserir*/
     function inserir" . $nome . "() {
         \$" . $nomeNormal . " = new " . $nomeNormal . "(\$_POST);
-            \$con = new conexao();
-            \$pdo = \$con->getConexao();
+            \$pdo = conexao::getConexao();
             \$stmt = \$pdo->prepare('insert into " . $nome . " values(";
         $conteudo = $conteudo . "default , ";
         $verificaDefault = true;
@@ -413,13 +401,13 @@ if (isset(\$_GET['msg'])) {
     }
     /*inserir*/
                 " . $pdoantigapartes[2];
-        file_put_contents("../Controle/" . $nomeNormal . "PDO.php", $conteudo);
+        file_put_contents(__DIR__."/../".$parametros->getDestino()."Controle/" . $nomeNormal . "PDO.php", $conteudo);
 
         $conteudo = "<!DOCTYPE html>
 <html>
     <head>
         <meta charset=\"UTF-8\">
-        <title>Login</title>
+        <title>Registro</title>
         <?php
         include_once '../Base/header.php';
         ?>
@@ -433,13 +421,11 @@ if (isset(\$_GET['msg'])) {
                     <div class=\"row center\">
                         <h4 class=\"textoCorPadrao2\">Cadastrar $nome</h4>";
         for ($i = 1; $i < (count($atributos)); $i++) {
-            if ($atributos[$i] != $senha) {
                 $conteudo = $conteudo . "
                         <div class=\"input-field col s6\">
                             <input type=\"text\" name=\"$atributos[$i]\">
                             <label>" . $atributos[$i] . "</label>
                         </div>";
-            }
         }
 
         $conteudo = $conteudo . "
@@ -458,11 +444,11 @@ if (isset(\$_GET['msg'])) {
 
 ";
 
-        file_put_contents("../Tela/registro$nome.php", $conteudo);
+        file_put_contents(__DIR__."/../".$parametros->getDestino()."Tela/registro$nome.php", $conteudo);
 
         $intefacePDO = new interfacesPDO();
         $intefacePDO->adicionaItemNav($semente, "registro$nome.php", 'registro');
-        header("location: ../Tela/registro$nome.php");
+        header("location: ../Tela/home.php");
     }
 
     public function telaEditar() {
@@ -478,11 +464,11 @@ if (isset(\$_GET['msg'])) {
         $semente = new gerador();
         $semente->setNome($tabela);
         $semente->setAtributo($atributos);
-        if (!realpath("../Controle/$tabela" . "PDO.php")) {
+        if (!realpath(__DIR__."/../".$parametros->getDestino()."Controle/$tabela" . "PDO.php")) {
 
             $geradorPDO->geraModelo($semente);
         }
-        $pdoantiga = file_get_contents("../Controle/" . $tabela . "PDO.php");
+        $pdoantiga = file_get_contents(__DIR__."/../".$parametros->getDestino()."Controle/" . $tabela . "PDO.php");
         if (preg_match("/*editar*/", $pdoantiga)) {
             $pdoantiga = explode("/*editar*/", $pdoantiga);
             $pdoantiga = $pdoantiga[0] . $pdoantiga[2];
@@ -503,7 +489,7 @@ if (isset(\$_GET['msg'])) {
             /*chave*/
             }
                 ";
-        file_put_contents("../Controle/" . $nomeNormal . "PDO.php", $conteudo);
+        file_put_contents(__DIR__."/../".$parametros->getDestino()."Controle/" . $nomeNormal . "PDO.php", $conteudo);
 
         $conteudo = "<!DOCTYPE html>
 <html>
@@ -560,7 +546,7 @@ if (isset(\$_GET['msg'])) {
 
 ";
 
-        file_put_contents("../Tela/editar$nome.php", $conteudo);
+        file_put_contents(__DIR__."/../".$parametros->getDestino()."Tela/editar$nome.php", $conteudo);
         header("Location: ./interfacesControle.php?function=criarListagem", TRUE, 307);
     }
 
@@ -588,20 +574,75 @@ if (realpath(\"./index.php\")) {
         </ul>
     </div>
 </nav>
+<ul id=\"slide-out\" class=\"sidenav\">
+    <li><div class=\"user-view\">
+            <div class=\"background\">
+                <img src=\"<?php echo $pontos; ?>Img/bg1.jpg\">
+            </div>
+            <a href=\"#user\"><div class=\"fotoPerfil left-align\" style=\"background-image: url('<?php echo $pontos . //$logado->getFoto(); ?>');background-size: cover;
+                                 background-position: center;
+                                 background-repeat: no-repeat;
+                                 max-height: 20vh; max-width: 20vh;\">
+                </div>
+            </a>
+            <a href=\"#name\"><span class=\"white-text name\"><?php echo //$logado->getNome(); ?></span></a>
+            <a href=\"#email\"><span class=\"white-text email\"><?php echo //$logado->getEmail(); ?></span></a>
+        </div></li>
+    <ul class=\"collapsible\">
+        <a href=\"<?php echo $pontos; ?>./index.php\" class=\"black-text\">
+            <li>
+                <div class=\"headerMeu\" style=\"margin-left: 16px\">
+                    Início
+                </div>
+            </li>
+        </a>
+        <!--proximomobile-->
+        <a class=\"black-text modal-trigger\" href=\"#modalSair\">
+            <li>
+                <div class=\"headerMeu black-text\" style=\"margin-left: 16px\">
+                    Sair
+                </div>
+            </li>
+        </a>
+    </ul>
+</ul>
+
 <script>
 $('.dropdown-trigger').dropdown({
         coverTrigger: false,
     });
+$('.sidenav').sidenav();
+    $('.collapsible').collapsible();
+$(\".anime\").each(function (){
+        if ($(this).attr(\"x\") == 1) {
+            $(this).children($(\".animi\")).attr(\"style\", \"transform: rotate(180deg);\");
+        }
+        
+    });
+    
+    $(\".anime\").click(function () {
+        if ($(this).attr(\"x\") == 0) {
+            $(\".anime\").attr(\"x\", \"0\");
+            $(\".animi\").attr(\"style\", \"transform: rotate(0deg);\");
+            $(this).children($(\".animi\")).attr(\"style\", \"transform: rotate(180deg);\");
+            $(this).attr(\"x\", \"1\");
+        } else {
+            $(this).children($(\".animi\")).attr(\"style\", \"transform: rotate(0deg);\");
+            $(this).attr(\"x\", \"0\");
+        }
+    });
 </script>
 ";
-        file_put_contents("../Base/navBar.php", $conteudo);
+        $parametros = new Parametros();
+        file_put_contents(__DIR__."/../".$parametros->getDestino()."Base/navBar.php", $conteudo);
     }
 
     function adicionaObjetoNav(gerador $semente) {
-        if (!realpath("../Base/navBar.php")) {
+        $parametros = new Parametros();
+        if (!realpath(__DIR__."/../".$parametros->getDestino()."Base/navBar.php")) {
             $this->criarNavBar();
         }
-        $nav = file_get_contents("../Base/navBar.php");
+        $nav = file_get_contents(__DIR__."/../".$parametros->getDestino()."Base/navBar.php");
         if (!preg_match("<!--" . $semente->getNome() . "-->", $nav)) {
 
             $nav = explode("<!--proximo-->", $nav);
@@ -618,12 +659,23 @@ $('.dropdown-trigger').dropdown({
             <!--proximo-->
 
 " . $nav[1];
-            file_put_contents("../Base/navBar.php", $conteudo);
+            $nav = explode("<!--proximomobile-->" , $conteudo);
+            $conteudo = $nav[0] . "
+        <li class=\"active\">
+            <div class=\"collapsible-header anime\" x=\"1\">".$semente->getNome()."<i class=\"large material-icons right animi\">arrow_drop_down</i></div>
+            <div class=\"collapsible-body\">
+                <ul class=\"grey lighten-2\">
+                <!--".$semente->getNome()."itemmobile-->
+                </ul>
+            </div>
+        </li>".$nav[1];
+            file_put_contents(__DIR__."/../".$parametros->getDestino()."Base/navBar.php", $conteudo);
         }
     }
 
     function adicionaItemNav(gerador $semente, $nomearquivo, $funcao) {
-        $nav = file_get_contents("../Base/navBar.php");
+        $parametros = new Parametros();
+        $nav = file_get_contents(__DIR__."/../".$parametros->getDestino()."../Base/navBar.php");
         if (preg_match("<!--" . $semente->getNome() . "$funcao-->", $nav)) {
             $nav = explode("<!--" . $semente->getNome() . "$funcao-->", $nav);
             $nav = $nav[0] . $nav[2];
@@ -634,7 +686,14 @@ $('.dropdown-trigger').dropdown({
                     <!--" . $semente->getNome() . "$funcao-->
                     <!--" . $semente->getNome() . "item-->
                 " . $nav[1];
-        file_put_contents("../Base/navBar.php", $conteudo);
+        $nav = explode("<!--".$semente->getNome()."itemmobile-->", $conteudo);
+        $conteudo = $nav[0]."
+           <!--" . $semente->getNome() . $funcao . "mobile-->
+                    <li><a href=\"<?php echo \$pontos; ?>./Tela/$nomearquivo\">$funcao</a></li>
+                    <!--" . $semente->getNome() . $funcao."mobile-->
+                    <!--" . $semente->getNome() . "itemmobile-->
+        ".$nav[1];
+        file_put_contents(__DIR__."/../".$parametros->getDestino()."Base/navBar.php", $conteudo);
     }
 
 }

@@ -1,36 +1,14 @@
 <?php
-include_once '../Base/requerLogin.php';
+include_once __DIR__ . '/../Base/requerLogin.php';
+include_once __DIR__ . "/../Modelo/Gerador.php";
+include_once __DIR__ . "/../Controle/conexao.php";
+include_once __DIR__ . "/../Controle/interfacesPDO.php";
 
-if (realpath("./index.php")) {
-    include_once "./Modelo/Gerador.php";
-} else {
-    if (realpath("../index.php")) {
-        include_once "../Modelo/Gerador.php";
-    } else {
-        if (realpath("../../index.php")) {
-            include_once "../../Modelo/Gerador.php";
-        }
-    }
-}
+class geradorPDO
+{
 
-if (realpath("./Controle/conexao.php")) {
-    include_once "./Controle/conexao.php";
-    include_once "./Controle/interfacesPDO.php";
-} else {
-    if (realpath("../Controle/conexao.php")) {
-        include_once "../Controle/conexao.php";
-        include_once "../Controle/interfacesPDO.php";
-    } else {
-        if (realpath("../../Controle/conexao.php")) {
-            include_once "../../Controle/conexao.php";
-            include_once "../../Controle/interfacesPDO.php";
-        }
-    }
-}
-
-class geradorPDO {
-
-    public function criaConexao() {
+    public function criaConexao()
+    {
         $conteudo = "<?php
 class conexao {
     private static \$con;
@@ -57,16 +35,18 @@ class conexao {
     }
 }
     ";
-        file_put_contents("./conexao.php", $conteudo);
+        $parametros = new Parametros();
+        file_put_contents(__DIR__."/../".$parametros->getDestino()."Controle/conexao.php", $conteudo);
 
         $con = new PDO("mysql:host=" . $_POST['host'] . ";", $_POST['usuario'], $_POST['senha']);
         $sql = $con->prepare("create database if not exists " . $_POST['nome']);
         $sql->execute();
 
-        header('location: ../index.php?msg=sucesso');
+        header('location: ../Tela/home.php?msg=sucesso');
     }
 
-    public function gerarTabela() {
+    public function gerarTabela()
+    {
         $parametros = new Parametros();
         $semente = new gerador($_POST);
         $pdo = conexao::getCustomConect($parametros->getNomeDb());
@@ -86,62 +66,14 @@ class conexao {
         if ($sql->execute()) {
 
 
-
             $conteudo = "<?php \n"
-                    . "\n"
-                    . "class " . $semente->getNome() . "{\n\n";
+                . "\n"
+                . "class " . $semente->getNome() . "{\n\n";
 
             for ($i = 0; $i < count($att); $i++) {
                 $conteudo = $conteudo . "private \$" . $att[$i] . ";\n";
             }
             $conteudo = $conteudo . "\n\n"
-                    . "public function __construct() {
-    if (func_num_args() != 0) {
-        \$atributos = func_get_args()[0];
-        foreach (\$atributos as \$atributo => \$valor) {
-                if (isset(\$valor)) {
-                    \$this->\$atributo = \$valor;
-                }
-            }
-        }
-    }
-
-    function atualizar(\$vetor) {
-        foreach (\$vetor as \$atributo => \$valor) {
-            if (isset(\$valor)) {
-                \$this->\$atributo = \$valor;
-            }
-        }
-    }"
-                    . "\n\n";
-            for ($i = 0; $i < count($att); $i++) {
-                $conteudo = $conteudo . "     public function get" . ucfirst($att[$i]) . "(){\n"
-                        . "         return \$this->" . $att[$i] . ";\n"
-                        . "     }\n\n"
-                        . "     function set" . ucfirst($att[$i]) . "($" . $att[$i] . "){\n"
-                        . "          \$this->" . $att[$i] . " = $" . $att[$i] . ";\n"
-                        . "     }\n\n"
-                ;
-            }
-            $conteudo = $conteudo . "}";
-
-            file_put_contents("../Modelo/" . ucfirst($semente->getNome()) . ".php", $conteudo);
-            $this->gerarPDO($semente);
-        } else {
-            header('location: ../index.php?msg=ERRO');
-        }
-    }
-
-    public function geraModelo(gerador $semente) {
-        $att = $semente->getAtributo();
-        $conteudo = "<?php \n"
-                . "\n"
-                . "class " . $semente->getNome() . "{\n\n";
-
-        for ($i = 0; $i < count($att); $i++) {
-            $conteudo = $conteudo . "private \$" . $att[$i] . ";\n";
-        }
-        $conteudo = $conteudo . "\n\n"
                 . "public function __construct() {
     if (func_num_args() != 0) {
         \$atributos = func_get_args()[0];
@@ -161,18 +93,64 @@ class conexao {
         }
     }"
                 . "\n\n";
-        for ($i = 0; $i < count($att); $i++) {
-            $conteudo = $conteudo . "     public function get" . ucfirst($att[$i]) . "(){\n"
+            for ($i = 0; $i < count($att); $i++) {
+                $conteudo = $conteudo . "     public function get" . ucfirst($att[$i]) . "(){\n"
                     . "         return \$this->" . $att[$i] . ";\n"
                     . "     }\n\n"
                     . "     function set" . ucfirst($att[$i]) . "($" . $att[$i] . "){\n"
                     . "          \$this->" . $att[$i] . " = $" . $att[$i] . ";\n"
-                    . "     }\n\n"
-            ;
+                    . "     }\n\n";
+            }
+            $conteudo = $conteudo . "}";
+
+            file_put_contents("../Modelo/" . ucfirst($semente->getNome()) . ".php", $conteudo);
+            $this->gerarPDO($semente);
+        } else {
+            header('location: ../Tela/home.php?msg=ERRO');
+        }
+    }
+
+    public function geraModelo(gerador $semente)
+    {
+        $att = $semente->getAtributo();
+        $conteudo = "<?php \n"
+            . "\n"
+            . "class " . $semente->getNome() . "{\n\n";
+
+        for ($i = 0; $i < count($att); $i++) {
+            $conteudo = $conteudo . "private \$" . $att[$i] . ";\n";
+        }
+        $conteudo = $conteudo . "\n\n"
+            . "public function __construct() {
+    if (func_num_args() != 0) {
+        \$atributos = func_get_args()[0];
+        foreach (\$atributos as \$atributo => \$valor) {
+                if (isset(\$valor)) {
+                    \$this->\$atributo = \$valor;
+                }
+            }
+        }
+    }
+
+    function atualizar(\$vetor) {
+        foreach (\$vetor as \$atributo => \$valor) {
+            if (isset(\$valor)) {
+                \$this->\$atributo = \$valor;
+            }
+        }
+    }"
+            . "\n\n";
+        for ($i = 0; $i < count($att); $i++) {
+            $conteudo = $conteudo . "     public function get" . ucfirst($att[$i]) . "(){\n"
+                . "         return \$this->" . $att[$i] . ";\n"
+                . "     }\n\n"
+                . "     function set" . ucfirst($att[$i]) . "($" . $att[$i] . "){\n"
+                . "          \$this->" . $att[$i] . " = $" . $att[$i] . ";\n"
+                . "     }\n\n";
         }
         $conteudo = $conteudo . "}";
-
-        file_put_contents("../Modelo/" . ucfirst($semente->getNome()) . ".php", $conteudo);
+        $parametros = new Parametros();
+        file_put_contents(__DIR__ . "/../" . $parametros->getDestino() . "/Modelo/" . ucfirst($semente->getNome()) . ".php", $conteudo);
         $interfacePDO = new interfacesPDO();
         if (!realpath("../Base/navBar.php")) {
             $interfacePDO->criarNavBar();
@@ -183,7 +161,60 @@ class conexao {
         $this->gerarPDO($semente);
     }
 
-    public function gerarPDO(gerador $semente) {
+    function geraEsqueleto(){
+        $parametros = new Parametros();
+        mkdir(__DIR__."/../".$parametros->getDestino()."Base" , 0777 , true);
+        mkdir(__DIR__."/../".$parametros->getDestino()."Controle" , 0777 , true);
+        mkdir(__DIR__."/../".$parametros->getDestino()."css" , 0777 , true);
+        mkdir(__DIR__."/../".$parametros->getDestino()."fonts" , 0777 , true);
+        mkdir(__DIR__."/../".$parametros->getDestino()."Img" , 0777 , true);
+        mkdir(__DIR__."/../".$parametros->getDestino()."js" , 0777 , true);
+        mkdir(__DIR__."/../".$parametros->getDestino()."Modelo" , 0777 , true);
+        mkdir(__DIR__."/../".$parametros->getDestino()."Tela" , 0777 , true);
+        mkdir(__DIR__."/../".$parametros->getDestino()."Tela" , 0777 , true);
+        copy(__DIR__."/../Moldes/PDOBase.php" , __DIR__."/../".$parametros->getDestino()."Controle/PDOBase.php");
+        copy(__DIR__."/../composer.phar" , __DIR__."/../".$parametros->getDestino()."/composer.phar");
+        copy(__DIR__."/../composer.json" , __DIR__."/../".$parametros->getDestino()."/composer.json");
+        $this->copyr(__DIR__."/../fonts" , __DIR__."/../".$parametros->getDestino()."fonts");
+        $this->copyr(__DIR__."/../css" , __DIR__."/../".$parametros->getDestino()."css");
+        $this->copyr(__DIR__."/../js" , __DIR__."/../".$parametros->getDestino()."js");
+    }
+
+    function copyr($source, $dest)
+    {
+        // COPIA UM ARQUIVO
+        if (is_file($source)) {
+            return copy($source, $dest);
+        }
+
+        // CRIA O DIRETÓRIO DE DESTINO
+        if (!is_dir($dest)) {
+            mkdir($dest);
+            echo "DIRET&Oacute;RIO $dest CRIADO<br />";
+        }
+
+        // FAZ LOOP DENTRO DA PASTA
+        $dir = dir($source);
+        while (false !== $entry = $dir->read()) {
+            // PULA "." e ".."
+            if ($entry == '.' || $entry == '..') {
+                continue;
+            }
+
+            // COPIA TUDO DENTRO DOS DIRETÓRIOS
+            if ($dest !== "$source/$entry") {
+                copyr("$source/$entry", "$dest/$entry");
+                echo "COPIANDO $entry de $source para $dest <br />";
+            }
+        }
+
+        $dir->close();
+        return true;
+
+    }
+    public function gerarPDO(gerador $semente)
+    {
+        $parametros = new Parametros();
         $nome = ucfirst($semente->getNome());
         $nomeNormal = $semente->getNome();
         $atributos = $semente->getAtributo();
@@ -191,13 +222,13 @@ class conexao {
 
     include_once __DIR__ . '/Controle/conexao.php';
     include_once __DIR__ . '/Modelo/" . $nome . ".php';
+    include_once __DIR__ . '/PDOBase.php';
 
-class " . $nome . "PDO{
+class " . $nome . "PDO extends PDOBase{
     /*inserir*/
     function inserir" . $nome . "() {
         \$" . $nomeNormal . " = new " . $nomeNormal . "(\$_POST);
-        \$con = new conexao();
-        \$pdo = \$con->getConexao();
+        \$pdo = \$conexao::getConexao();
         \$stmt = \$pdo->prepare('insert into " . $nomeNormal . " values(";
 
         $buscaRegra = explode(" ", $semente->getRegra()[0]);
@@ -238,7 +269,8 @@ class " . $nome . "PDO{
     /*inserir*/
     
 ";
-        file_put_contents("./" . $nomeNormal . "PDO.php", $conteudo);
+        $parametros = new Parametros();
+        file_put_contents(__DIR__ . "/../" . $parametros->getDestino() . "/Controle/" . $nomeNormal . "PDO.php", $conteudo);
 
         $conteudo = "
             
@@ -246,9 +278,7 @@ class " . $nome . "PDO{
 
         $conteudo = $conteudo . "
     public function select" . $nome . "(){
-            
-        \$con = new conexao();
-        \$pdo = \$con->getConexao();
+        \$pdo = conexao::getConexao();
         \$stmt = \$pdo->prepare('select * from " . $nomeNormal . " ;');
         \$stmt->execute();
         if (\$stmt->rowCount() > 0) {
@@ -259,7 +289,7 @@ class " . $nome . "PDO{
     }
     
 ";
-        file_put_contents("./" . $nomeNormal . "PDO.php", $conteudo, FILE_APPEND);
+        file_put_contents(__DIR__ . "/../" . $parametros->getDestino() . "/Controle/" . $nomeNormal . "PDO.php", $conteudo, FILE_APPEND);
 
         for ($i = 0; $i < count($atributos); $i++) {
 
@@ -267,8 +297,7 @@ class " . $nome . "PDO{
                     
     public function select" . $nome . ucfirst($atributos[$i]) . "(\$" . $atributos[$i] . "){
             
-        \$con = new conexao();
-        \$pdo = \$con->getConexao();
+        \$pdo = conexao::getConexao();
         \$stmt = \$pdo->prepare('select * from " . $nomeNormal . " where " . $atributos[$i] . " = :" . $atributos[$i] . ";');
         \$stmt->bindValue(':" . $atributos[$i] . "', \$" . $atributos[$i] . ");
         \$stmt->execute();
@@ -286,8 +315,7 @@ class " . $nome . "PDO{
 
         $conteudo = " 
     public function update" . $nome . "(" . $nome . " $" . $nomeNormal . "){        
-        \$con = new conexao();
-        \$pdo = \$con->getConexao();
+         \$pdo = conexao::getConexao();
         \$stmt = \$pdo->prepare('update " . $nomeNormal . " set ";
         for ($i = 1; $i < (count($atributos) - 1); $i++) {
             $conteudo = $conteudo . $atributos[$i] . " = :" . $atributos[$i] . " , ";
@@ -310,39 +338,35 @@ class " . $nome . "PDO{
         return \$stmt->rowCount();
     }            ";
 
-        file_put_contents("./" . $nomeNormal . "PDO.php", $conteudo, FILE_APPEND);
+        file_put_contents(__DIR__ . "/../" . $parametros->getDestino() . "/Controle/" . $nomeNormal . "PDO.php", $conteudo, FILE_APPEND);
         $conteudo = "
     
     public function delete" . $nome . "(\$definir){
-        \$con = new conexao();
-        \$pdo = \$con->getConexao();
-        \$stmt = \$pdo->prepare('delete from " . $nomeNormal . " where ".$atributos[0]." = :definir ;');
+         \$pdo = conexao::getConexao();
+        \$stmt = \$pdo->prepare('delete from " . $nomeNormal . " where " . $atributos[0] . " = :definir ;');
         \$stmt->bindValue(':definir', \$definir);
         \$stmt->execute();
         return \$stmt->rowCount();
     }
     
     public function deletar(){
-        \$this->delete$nome(\$_GET['id']);
+        //\$this->delete$nome(\$_GET['id']);
         header('location: ../Tela/listar$nome.php');
     }
 
 
 /*chave*/}
 ";
-        if (file_put_contents("./" . $nomeNormal . "PDO.php", $conteudo, FILE_APPEND)) {
+        if (file_put_contents(__DIR__ . "/../" . $parametros->getDestino() . "/Controle/" . $nomeNormal . "PDO.php", $conteudo, FILE_APPEND)) {
             $this->criaControle($semente);
         } else {
-            header('location: ../index.php?msg=erroCriaPDO');
+            header('location: ../Tela/home.php?msg=erroCriaPDO');
         }
     }
 
-    public function criaControle(gerador $semente) {
+    public function criaControle(gerador $semente)
+    {
         $conteudo = "<?php
-
-if (!isset(\$_SESSION)) {
-    session_start();
-}
 
 include_once __DIR__ . '/Controle/" . $semente->getNome() . "PDO.php';
 
@@ -354,11 +378,11 @@ if (isset(\$_GET['function'])) {
 }
 
 ";
-
-        if (file_put_contents("./" . $semente->getNome() . "Controle.php", $conteudo)) {
-            header('location: ../index.php?msg=ok');
+        $parametros = new Parametros();
+        if (file_put_contents(__DIR__ . "/../" . $parametros->getDestino() . "/Controle/" . $semente->getNome() . "Controle.php", $conteudo)) {
+            header('location: ../Tela/home.php?msg=ok');
         } else {
-            header('location: ../index.php?msg=erroCriaControle');
+            header('location: ../Tela/home.php?msg=erroCriaControle');
         }
     }
 

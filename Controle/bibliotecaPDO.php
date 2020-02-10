@@ -1,6 +1,6 @@
 <?php
 
-include_once '../Base/requerLogin.php';
+include_once __DIR__.'/../Base/requerLogin.php';
 
 
 class bibliotecaPDO {
