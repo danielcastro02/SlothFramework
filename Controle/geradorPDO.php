@@ -67,10 +67,9 @@ class conexao {
     }
 
     public function gerarTabela() {
-
+        $parametros = new Parametros();
         $semente = new gerador($_POST);
-        $con = new conexao();
-        $pdo = $con->getConexao();
+        $pdo = conexao::getCustomConect($parametros->getNomeDb());
         $att = $semente->getAtributo();
         $tipos = $semente->getTipo();
         $regras = $semente->getRegra();
