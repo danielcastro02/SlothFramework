@@ -190,21 +190,8 @@ class conexao {
         $atributos = $semente->getAtributo();
         $conteudo = "<?php
 
-if (realpath('./index.php')) {
-    include_once './Controle/conexao.php';
-    include_once './Modelo/" . $nome . ".php';
-} else {
-    if (realpath('../index.php')) {
-        include_once '../Controle/conexao.php';
-        include_once '../Modelo/" . $nome . ".php';
-    } else {
-        if (realpath('../../index.php')) {
-            include_once '../../Controle/conexao.php';
-            include_once '../../Modelo/" . $nome . ".php';
-        }
-    }
-}
-
+    include_once __DIR__ . '/Controle/conexao.php';
+    include_once __DIR__ . '/Modelo/" . $nome . ".php';
 
 class " . $nome . "PDO{
     /*inserir*/
@@ -358,17 +345,7 @@ if (!isset(\$_SESSION)) {
     session_start();
 }
 
-if (realpath('./index.php')) {
-    include_once './Controle/" . $semente->getNome() . "PDO.php';
-} else {
-    if (realpath('../index.php')) {
-        include_once '../Controle/" . $semente->getNome() . "PDO.php';
-    } else {
-        if (realpath('../../index.php')) {
-            include_once '../../Controle/" . $semente->getNome() . "PDO.php';
-        }
-    }
-}
+include_once __DIR__ . '/Controle/" . $semente->getNome() . "PDO.php';
 
 \$classe = new " . $semente->getNome() . "PDO();
 
