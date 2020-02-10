@@ -31,15 +31,31 @@ class geradorPDO {
 
     public function criaConexao() {
         $conteudo = "<?php
-    class conexao {
-               
-        public function getConexao(){
-         
-           \$con = new PDO('mysql:host=" . $_POST['host'] . ";dbname=" . $_POST['nome'] . "','" . $_POST['usuario'] . "','" . $_POST['senha'] . "');
-            return \$con;
-          
+class conexao {
+    private static \$con;
+    public static function getConexao(): PDO {
+        \$parametros = new Parametros();
+        try{
+            if (is_null(selff::\$con)) {
+                self::\$con = new PDO('mysql:host=localhost; dbname='\$parametros->getNomeDb(), \$parametros->getNomeDb(), '', array(PDO::MYSQ_ATTR_INIT_COMMAND => 'SET NAMES utf8'));
+            }
+            return self::\$con;
+        } catch (Exception $\e) {
+            echo 'FALHA GERAL CONTATE O SUPORTE contato@markeyvip.com';
+            exit(0);
         }
-    }";
+    }
+    public static function getTransactConnetion(): PDO {
+        \$parametros = new Parametros();
+        try {
+            return new PDO('mysql:host=localhost;dbname='.\$parametros->getNomeDb(), \$parametros->getNomeDb(), '', array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'));
+        } catch (Exception \$e) {
+            echo 'FALHA GERAL CONTATE O SUPORTE contato@markeyvip.com';
+            exit(0);
+        }
+    }
+}
+    ";
         file_put_contents("./conexao.php", $conteudo);
 
         $con = new PDO("mysql:host=" . $_POST['host'] . ";", $_POST['usuario'], $_POST['senha']);
