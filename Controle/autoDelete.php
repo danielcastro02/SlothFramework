@@ -1,4 +1,6 @@
 <?php
+include_once '../Base/requerLogin.php';
+?><?php
 
 $conteudo = file_get_contents("./listaarquivos.txt");
 $vetor = explode(";", $conteudo);

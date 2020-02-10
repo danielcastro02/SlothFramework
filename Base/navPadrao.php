@@ -11,13 +11,18 @@ if (realpath("./index.php")) {
         }
     }
 }
+include_once __DIR__."/../Modelo/Parametros.php";
+$parametros = new Parametros();
 ?>
 
 <nav class="nav-extended black">
     <div class="nav-wrapper" style="width: 100vw; margin-left: auto; margin-right: auto;">
-        <a href="<?php echo $pontos; ?>./Tela/home.php" class="brand-logo center">SlothFramework</a>
+        <a href="<?php echo $pontos; ?>./Tela/home.php" class="brand-logo">SlothFramework</a>
         <ul class="right hide-on-med-and-down">
+            <li><a class="center" href="#!"><?php echo $parametros->getDestino() ?></a> </li>
+            <li><a class="center" href="#!" id="defineCaminho">Definir destino</a> </li>
             <li>
+
                 <a class='dropdown-trigger center' style="background-color: transparent" data-hover="true" href='#' data-target='dropdown4'>Interfaces</a>
                 <ul id='dropdown4' class='dropdown-content'>
                     <li><a href="<?php echo $pontos; ?>./Tela/criaLogin.php">Criar Login</a></li>
@@ -59,7 +64,14 @@ if (realpath("./index.php")) {
 
             </li>
             <li>
-                <a href="<?php echo $pontos; ?>./Controle/autoDelete.php" id="autodelete">Auto Destruir</a>
+                <?php
+                if($parametros->getServer()!= "https://sloth.markeyvip.com") {
+                    ?>
+                    <a href="<?php echo $pontos; ?>./Controle/autoDelete.php" class="disabled" id="autodelete">Auto
+                        Destruir</a>
+                    <?php
+                }
+                ?>
             </li>
         </ul>
     </div>
@@ -91,6 +103,19 @@ if (realpath("./index.php")) {
     });
     $('.dropdown-trigger').dropdown({
         coverTrigger: false,
+    });
+
+    $("#defineCaminho").click(function(){
+        var caminho = prompt("Insira o caiminho:");
+        $.ajax({
+            url: "<?php echo $pontos ?>Controle/parametrosControle.php?function=alteraDestino&destino="+caminho,
+            success: function (data) {
+                if(data == 'true'){
+                    alert("Trocado!");
+                    location.reload();
+                }
+            }
+        })
     });
 
 </script>

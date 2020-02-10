@@ -1,4 +1,5 @@
 <?php
+include_once '../Base/requerLogin.php';
 
 if (realpath("./index.php")) {
     include_once "./Modelo/Gerador.php";

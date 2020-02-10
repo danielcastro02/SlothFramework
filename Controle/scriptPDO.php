@@ -1,4 +1,5 @@
 <?php
+include_once '../Base/requerLogin.php';
 
 class scriptPDO {
 

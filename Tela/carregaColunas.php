@@ -1,5 +1,7 @@
 <?php
 
+include_once '../Base/requerLogin.php';
+
 include_once '../Controle/bancoPDO.php';
 $bancoPDO = new bancoPDO();
 $tabela = $_GET['tabela'];

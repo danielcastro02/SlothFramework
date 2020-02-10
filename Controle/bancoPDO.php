@@ -1,5 +1,7 @@
 <?php
 
+include_once '../Base/requerLogin.php';
+
 if (realpath("./index.php") && realpath("./conexao.php")) {
     include_once "./Modelo/Gerador.php";
     include_once "./Controle/conexao.php";
