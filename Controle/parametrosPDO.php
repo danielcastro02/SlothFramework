@@ -11,4 +11,11 @@ class ParametrosPDO
         $parametros->save();
         echo "true";
     }
+
+    function alteraBanco(){
+        $parametros = new Parametros();
+        $parametros->setNomeDb($_GET['nomeDb']);
+        $parametros->save();
+        echo "true";
+    }
 }
