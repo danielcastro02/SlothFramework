@@ -73,6 +73,10 @@ include_once '../Base/navBar.php';
                     <input type="text" name="dominio" id="dominio">
                     <label for="dominio">Dominio (sem https:// ou qualquer /)</label>
                 </div>
+                <div class="input-field col s6">
+                    <input type="text" name="nomeDb" id="nomeDb">
+                    <label for="nomeDb">Banco de dados:</label>
+                </div>
                 <div class="row center">
                     <a href="../index.php" class="corPadrao3 btn">Voltar</a>
                     <input type="submit" class="btn corPadrao2" value="Cadastrar">

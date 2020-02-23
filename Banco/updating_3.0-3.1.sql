@@ -1,0 +1,1 @@
+ALTER TABLE `site` ADD `nomeDb` VARCHAR(50) NULL AFTER `parametros`;

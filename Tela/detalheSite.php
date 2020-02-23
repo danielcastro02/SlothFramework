@@ -63,7 +63,7 @@ $nextVersions = $versaoPDO->selectNextVersions($projeto->getIdProjeto() , $versa
             </form>
             <div class="row center">
                 <a id='excluir' class="btn red darken-3"
-                   href="../Controle/projetoPDO.php?function=excluir&id_projeto=<?php echo $projeto->getIdProjeto() ?>">Excluir</a>
+                   href="../Controle/siteControle.php?function=excluir&id_site=<?php echo $_GET['id_site'] ?>">Excluir</a>
             </div>
         </div>
     </div>

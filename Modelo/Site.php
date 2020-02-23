@@ -8,6 +8,7 @@ class Site
     private $id_versao;
     private $dominio;
     private $parametros;
+    private $nomeDb;
 
     public function __construct() {
         if (func_num_args() != 0) {
@@ -26,6 +27,16 @@ class Site
                 $this->$atributo = $valor;
             }
         }
+    }
+
+    public function getNomeDb()
+    {
+        return $this->nomeDb;
+    }
+
+    public function setNomeDb($nomeDb)
+    {
+        $this->nomeDb = $nomeDb;
     }
 
     public function getIdSite()

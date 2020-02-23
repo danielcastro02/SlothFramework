@@ -12,16 +12,17 @@ class SitePDO extends PDOBase
     {
         $site = new Site($_POST);
         $pdo = conexao::getConexao();
-        $stmt = $pdo->prepare("insert into site values (default , :id_cliente , :id_versao , :dominio , :parametros)");
+        $stmt = $pdo->prepare("insert into site values (default , :id_cliente , :id_versao , :dominio , :parametros , :nomedb)");
         $stmt->bindValue(":id_cliente", $site->getIdCliente());
         $stmt->bindValue(":id_versao", $site->getIdVersao());
         $stmt->bindValue(":dominio", $site->getDominio());
         $stmt->bindValue(":parametros", "/Parametros/" . $site->getDominio() . ".json");
+        $stmt->bindValue(":nomedb", $site->getNomeDb());
         $stmt->execute();
         if (realpath("../../" . $site->getDominio() . "/Modelo/parametros.json")) {
             file_put_contents("../Parametros/" . $site->getDominio() . ".json", file_get_contents("../../" . $site->getDominio() . "/Modelo/parametros.json"));
         } else {
-            if (realpath("../../" . $site->getDominio() . "/index.php")) {
+            if (!realpath("../../" . $site->getDominio() . "/index.php")) {
                 $this->newDomain($site);
             }
         }
@@ -36,7 +37,7 @@ class SitePDO extends PDOBase
         $versaoPDO = new VersaoPDO();
         $versao = $versaoPDO->selectId_versao($site->getIdVersao());
         $versao = new Versao($versao->fetch());
-        $nomeDB = explode(".", $site->getDominio());
+        $nomeDB = $site->getNomeDb();
         $anterior = clone $versao;
         while ($anterior->getFullSql() == "") {
             $anterior = $versaoPDO->selectId_versao($versao->getIdAnterior());
@@ -44,7 +45,7 @@ class SitePDO extends PDOBase
         }
         $fullSQL = file_get_contents(".." . VersaoPDO::REPO_PATH . $anterior->getFullSql());
         $fullSQL = explode(";", $fullSQL);
-        $pdo = conexao::getCustomConect($nomeDB[0]);
+        $pdo = conexao::getCustomConect($nomeDB);
         foreach ($fullSQL as $command) {
             $stmt = $pdo->prepare($command);
             $stmt->execute();
@@ -60,7 +61,7 @@ class SitePDO extends PDOBase
                     $sqlArr = explode(";", $sql);
                     $nomeDb = explode(".", $site->getDominio());
 
-                    $pdo = conexao::getCustomConect($nomeDb[0]);
+                    $pdo = conexao::getCustomConect($nomeDb);
                     foreach ($sqlArr as $command) {
                         $stmt = $pdo->prepare($command);
                         $stmt->execute();
@@ -73,6 +74,7 @@ class SitePDO extends PDOBase
         $zip = new ZipArchive();
         $zip->open(".." . VersaoPDO::REPO_PATH . $versao->getZipFile());
         $zip->extractTo("../../" . $site->getDominio());
+        file_put_contents("../../".$site->getDominio()."/Modelo/parametros.json" , json_encode(array("nome_db" => $site->getNomeDb())));
         header("location: ../Tela/listagemSite.php");
 
     }
@@ -135,10 +137,22 @@ class SitePDO extends PDOBase
                 if ($proxima->getUpdateSql() != ".") {
                     $sql = file_get_contents(".." . VersaoPDO::REPO_PATH . $proxima->getUpdateSql());
                     $sqlArr = explode(";", $sql);
-                    $parametros = json_decode("../../".$site->getDominio()."/Modelo/parametros.json" , true);
-                    $nomeDb = $parametros['nome_db'];
-                    $this->addToast("Banco selecionado: ".$nomeDb);
-                    $pdo = conexao::getCustomConect($nomeDb);
+                    if($site->getNomeDb() == "" || $site->getNomeDb() == null) {
+                        if (realpath("../../" . $site->getDominio() . "/Modelo/parametros.json")) {
+                            $parametros = json_decode(file_get_contents("../../" . $site->getDominio() . "/Modelo/parametros.json"), true);
+                            $nomeDb = $parametros['nome_db'];
+                            $pdo = conexao::getCustomConect($nomeDb);
+                            $this->addToast("Banco selecionado: " . $nomeDb);
+                        } else {
+                            $nomeDb = explode(".", $site->getDominio());
+                            $pdo = conexao::getCustomConect($nomeDb[0]);
+                            $this->addToast("Banco selecionado: " . $nomeDb[0]);
+                        }
+                    }else{
+                        $nomeDb = $site->getNomeDb();
+                        $pdo = conexao::getCustomConect($nomeDb);
+                        $this->addToast("Banco selecionado: " . $nomeDb);
+                    }
                     foreach ($sqlArr as $comand) {
                         $this->log("Comando de atualização: " . $comand);
                         $pdo->exec($comand);
@@ -146,7 +160,10 @@ class SitePDO extends PDOBase
                 }
                 $nextVersion = $versaoPDO->getNextVersion($proxima->getIdProjeto(), $proxima->getIdVersao());
                 $this->addToast("Atualizando banco para: " . $proxima->getNomeVersao());
-
+                $this->addToast("Versão final: " . $proxima->getNomeVersao());
+                $zip = new ZipArchive();
+                $zip->open(".." . VersaoPDO::REPO_PATH . $proxima->getZipFile());
+                $zip->extractTo("../../" . $site->getDominio());
             }
         }
         if ($proxima) {
@@ -164,6 +181,15 @@ class SitePDO extends PDOBase
         $stmt->bindValue(":id_site", $site->getIdSite());
         $stmt->execute();
         header("location: ../Tela/detalheSite.php?id_site=" . $site->getIdSite());
+    }
+
+    function excluir(){
+        $this->requerLogin();
+        $pdo = conexao::getConexao();
+        $stmt = $pdo->prepare("delete from site where id_site = :id_site");
+        $stmt->bindValue(":id_site" , $_GET['id_site']);
+        $stmt->execute();
+        header('location: ../Tela/listagemSite.php');
     }
 
 }
