@@ -1,0 +1,7 @@
+{
+    "require": {
+        "phpmailer/phpmailer": "^6.0",
+        "mercadopago/dx-php": "dev-master",
+        "facebook/graph-sdk": "^5.7"
+    }
+}
