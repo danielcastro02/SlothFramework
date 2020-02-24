@@ -8,6 +8,9 @@ class ParametrosPDO
     function alteraDestino(){
         $parametros = new Parametros();
         $parametros->setDestino($_GET['destino']);
+        if(!realpath("../../".$_GET['destino'])){
+            mkdir("../../".$_GET['destino']);
+        }
         $parametros->save();
         echo "true";
     }

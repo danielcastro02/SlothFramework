@@ -9,16 +9,16 @@ and open the template in the editor.
         <meta charset="UTF-8">
         <title></title>
         <?php
-        include_once './Base/header.php';
+        include_once '../Base/header.php';
         ?>
     </head>
     <body>
         <?php
-        include_once './Base/navPadrao.php';
+        include_once '../Base/navPadrao.php';
         ?><main>
             <main>
                 <div class="row" style="margin-top: 15vh;">
-                    <form action="./Controle/usuarioControle.php?function=login" class="card col l6 offset-l3 m8 offset-m2 s10 offset-s1" method="post">
+                    <form action="../Controle/usuarioControle.php?function=login" class="card col l6 offset-l3 m8 offset-m2 s10 offset-s1" method="post">
                         <div class="row center">
                             <h4 class="textoCorPadrao2">Faça Login</h4>
                             <div class="input-field col s10 offset-s1">
@@ -50,7 +50,7 @@ and open the template in the editor.
         </main>
         </main>
         <?php
-        include_once './Base/footer.php';
+        include_once '../Base/footer.php';
         ?>
     </body>
 </html>
